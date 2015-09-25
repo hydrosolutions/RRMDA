@@ -4,4 +4,4 @@ This is a copy of the online model taken on September 25, 2015 at 10:48. This
 copy is the new basis for the development master on github. Changes in the code
 must never be done in the online version but a branch from the github master has
 to be made, changes have to be made and the code has to be tested offline before
-a new release of the code can be copied to the mac mini. 
+a new release of the code can be copied to the server. 
