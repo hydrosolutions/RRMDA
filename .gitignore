@@ -47,5 +47,8 @@ Temporary Items
 .dropbox
 
 # Directories
-app/
+app/Themi/data/
+app/Themi/resources/
+app/Themi/results/
+app/Themi_example/
 testing/
