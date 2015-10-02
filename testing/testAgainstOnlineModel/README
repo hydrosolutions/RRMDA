@@ -1,0 +1,25 @@
+Semi-automatic test of current development version against a stable release. 
+I.e. a running on-line model. This test is very weak since a data error at a 
+point in history can strew up the test of the runModel files.
+
+The test is stable, however, for the result files of getRaw_Themi and 
+processRaw_Themi. 
+
+How to:
+- Start matlab on the server and on the local development machine. 
+- Export the paths to src/ and app/Themi as well to their subdirectories if 
+  necessary.
+- Manually run getRaw_Themi, processRaw_Themi, and runModel_Themi.
+- Copy one or more of the following files from the online server app/Themi/ to 
+  the directory ./data_for_comparison/:
+      - From directory data/raw/ copy up to all .mat files.
+      - From directory data/processed/sub copy up to all .mat files.
+      - From directory data/processed/db copy the latest (or more) .mat file(s).
+      - From directory results/nowcast copy the lastest (or more) .mat file(s).
+      - From directory results/forecast/ copy the laster (or more) .mat file(s) 
+        in either of the subdirectories ET, G, Q, or S.
+- In matlab cd to RRMDA/testing/testAgainstOnlineModel.
+- Run compare_data.m
+  If one of the files differs from the online model version the script may go 
+  into debug mode. To continue press the continue button in matlab. 
+- Check the output file compare_data.log for information about the test.

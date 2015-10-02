@@ -658,7 +658,7 @@ try
     disp('---')
     clearvars today
     toc
-    exit(0)
+    %exit(0)
 catch ME
     
     disp('---')
@@ -671,7 +671,7 @@ catch ME
     disp('---')
     disp('Next try in 3 hours!')
     disp('---')
-    exit(1)
+    %exit(1)
 end
 
 
