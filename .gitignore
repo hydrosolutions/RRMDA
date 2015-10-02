@@ -2,6 +2,10 @@
 Thumbs.db
 ehthumbs.db
 
+# Ignore log files
+*.log
+*.stdout
+
 # Folder config file
 Desktop.ini
 
@@ -51,4 +55,6 @@ app/Themi/data/
 app/Themi/resources/
 app/Themi/results/
 app/Themi_example/
-testing/
+testing/Vakhsh_data/
+testing/waterStress/
+testing/testAgainstOnlineModel/data_for_comparison/

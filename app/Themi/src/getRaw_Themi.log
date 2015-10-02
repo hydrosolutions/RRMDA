@@ -1,0 +1,228 @@
+-------------------------------------------------
+ 28.09.2015 15:36 : Starting getRaw_Themi
+-------------------------------------------------
+Setting up . . . # 28. 9.2015 15:36
+Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('cd')" style="font-weight:bold">cd</a>
+Cannot CD to /Users/hs_software/Dropbox (hydrosolutions)/RRM/app/Themi (Name is nonexistent or not a directory).
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('getRaw_Themi', '/Users/beamarti/Dropbox (hydrosolutions)/RRMDA/app/Themi/src/getRaw_Themi.m', 55)" style="font-weight:bold">getRaw_Themi</a> (<a href="matlab: opentoline('/Users/beamarti/Dropbox (hydrosolutions)/RRMDA/app/Themi/src/getRaw_Themi.m',55,0)">line 55</a>)
+    cd(pfad)
+-------------------------------------------------
+ 28.09.2015 15:37 : Starting getRaw_Themi
+-------------------------------------------------
+Setting up . . . # 28. 9.2015 15:37
+Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('cd')" style="font-weight:bold">cd</a>
+Cannot CD to /Users/hs_software/Dropbox (hydrosolutions)/RRM/app/Themi (Name is nonexistent or not a directory).
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('getRaw_Themi', '/Users/beamarti/Dropbox (hydrosolutions)/RRMDA/app/Themi/src/getRaw_Themi.m', 55)" style="font-weight:bold">getRaw_Themi</a> (<a href="matlab: opentoline('/Users/beamarti/Dropbox (hydrosolutions)/RRMDA/app/Themi/src/getRaw_Themi.m',55,0)">line 55</a>)
+    cd(pfad)
+-------------------------------------------------
+ 28.09.2015 15:40 : Starting getRaw_Themi
+-------------------------------------------------
+Setting up . . . . . . done.
+Getting precipitation data . . . . . . done.
+Getting temperature data . . . . . . done.
+Getting forecast data . . . . . . done.
+Getting WMO station data . . . . . . done.
+Getting eNDVI data . . . . . . done.
+Getting iMoMo station data. . . . . . done.
+-------------------------------------------------
+ 28.09.2015 15:49 : getRaw_Themi successfully finished!
+-------------------------------------------------
+-------------------------------------------------
+ 28.09.2015 15:56 : Starting getRaw_Themi
+-------------------------------------------------
+Setting up . . . . . . done.
+Getting precipitation data . . . . . . done.
+Getting temperature data . . . . . . done.
+Getting forecast data . . . . . . done.
+Getting WMO station data . . . . . . done.
+Getting eNDVI data . . . . . . done.
+Getting iMoMo station data. . . . . . done.
+-------------------------------------------------
+ 28.09.2015 16:09 : getRaw_Themi successfully finished!
+-------------------------------------------------
+-------------------------------------------------
+ 28.09.2015 16:14 : Starting getRaw_Themi
+-------------------------------------------------
+Setting up . . . . . . done.
+Getting precipitation data . . . . . . done.
+Getting temperature data . . . . . . done.
+Getting forecast data . . . -------------------------------------------------
+ 28.09.2015 16:19 : Starting getRaw_Themi
+-------------------------------------------------
+Setting up . . . . . . done.
+Getting precipitation data . . . . . . done.
+Getting temperature data . . . . . . done.
+Getting forecast data . . . . . . done.
+Getting WMO station data . . . . . . done.
+Getting eNDVI data . . . . . . done.
+Getting iMoMo station data. . . . . . done.
+-------------------------------------------------
+ 28.09.2015 16:30 : getRaw_Themi successfully finished!
+-------------------------------------------------
+-------------------------------------------------
+ 28.09.2015 16:31 : Starting getRaw_Themi
+-------------------------------------------------
+Setting up . . . . . . done.
+Getting precipitation data . . . . . . done.
+Getting temperature data . . . -------------------------------------------------
+ 28.09.2015 16:34 : Starting getRaw_Themi
+-------------------------------------------------
+Setting up . . . . . . done.
+Getting precipitation data . . . . . . done.
+Getting temperature data . . . . . . done.
+Getting forecast data . . . . . . done.
+Getting WMO station data . . . . . . done.
+Getting eNDVI data . . . . . . done.
+Getting iMoMo station data. . . . . . done.
+-------------------------------------------------
+ 28.09.2015 16:45 : getRaw_Themi successfully finished!
+-------------------------------------------------
+-------------------------------------------------
+ 28.09.2015 16:45 : Starting getRaw_Themi
+-------------------------------------------------
+Setting up . . . . . . done.
+Getting precipitation data . . . . . . done.
+Getting temperature data . . . . . . done.
+Getting forecast data . . . . . . done.
+Getting WMO station data . . . . . . done.
+Getting eNDVI data . . . . . . done.
+Getting iMoMo station data. . . . . . done.
+-------------------------------------------------
+ 28.09.2015 16:55 : getRaw_Themi successfully finished!
+-------------------------------------------------
+-------------------------------------------------
+ 30.09.2015 09:36 : Starting getRaw_Themi
+-------------------------------------------------
+Setting up . . . . . . done.
+Getting precipitation data . . . . . . done.
+Getting temperature data . . . . . . done.
+Getting forecast data . . . . . . done.
+Getting WMO station data . . . . . . done.
+Getting eNDVI data . . . . . . done.
+Getting iMoMo station data. . . . . . done.
+-------------------------------------------------
+ 30.09.2015 09:46 : getRaw_Themi successfully finished!
+-------------------------------------------------
+-------------------------------------------------
+ 30.09.2015 09:51 : Starting getRaw_Themi
+-------------------------------------------------
+Setting up . . . . . . done.
+Getting precipitation data . . . . . . done.
+Getting temperature data . . . . . . done.
+Getting forecast data . . . . . . done.
+Getting WMO station data . . . . . . done.
+Getting eNDVI data . . . . . . done.
+Getting iMoMo station data. . . . . . done.
+-------------------------------------------------
+ 30.09.2015 10:02 : getRaw_Themi successfully finished!
+-------------------------------------------------
+-------------------------------------------------
+ 30.09.2015 10:04 : Starting getRaw_Themi
+-------------------------------------------------
+Setting up . . . . . . done.
+Getting precipitation data . . . . . . done.
+Getting temperature data . . . . . . done.
+Getting forecast data . . . . . . done.
+Getting WMO station data . . . . . . done.
+Getting eNDVI data . . . . . . done.
+Getting iMoMo station data. . . . . . done.
+-------------------------------------------------
+ 30.09.2015 10:15 : getRaw_Themi successfully finished!
+-------------------------------------------------
+-------------------------------------------------
+ 30.09.2015 10:18 : Starting getRaw_Themi
+-------------------------------------------------
+Setting up . . . . . . done.
+Getting precipitation data . . . . . . done.
+Getting temperature data . . . . . . done.
+Getting forecast data . . . . . . done.
+Getting WMO station data . . . . . . done.
+Getting eNDVI data . . . . . . done.
+Getting iMoMo station data. . . . . . done.
+-------------------------------------------------
+ 30.09.2015 10:29 : getRaw_Themi successfully finished!
+-------------------------------------------------
+-------------------------------------------------
+ 30.09.2015 10:38 : Starting getRaw_Themi
+-------------------------------------------------
+Setting up . . . . . . done.
+Getting precipitation data . . . . . . done.
+Getting temperature data . . . . . . done.
+Getting forecast data . . . . . . done.
+Getting WMO station data . . . . . . done.
+Getting eNDVI data . . . . . . done.
+Getting iMoMo station data. . . . . . done.
+-------------------------------------------------
+ 30.09.2015 10:48 : getRaw_Themi successfully finished!
+-------------------------------------------------
+-------------------------------------------------
+ 01.10.2015 09:51 : Starting getRaw_Themi
+-------------------------------------------------
+Setting up . . . . . . done.
+Getting precipitation data . . . . . . done.
+Getting temperature data . . . . . . done.
+Getting forecast data . . . . . . done.
+Getting WMO station data . . . . . . done.
+Getting eNDVI data . . . . . . done.
+Getting iMoMo station data. . . . . . done.
+-------------------------------------------------
+ 01.10.2015 10:01 : getRaw_Themi successfully finished!
+-------------------------------------------------
+-------------------------------------------------
+ 01.10.2015 10:23 : Starting getRaw_Themi
+-------------------------------------------------
+Setting up . . . . . . done.
+Getting precipitation data . . . . . . done.
+Getting temperature data . . . . . . done.
+Getting forecast data . . . . . . done.
+Getting WMO station data . . . . . . done.
+Getting eNDVI data . . . . . . done.
+Getting iMoMo station data. . . . . . done.
+-------------------------------------------------
+ 01.10.2015 10:33 : getRaw_Themi successfully finished!
+-------------------------------------------------
+-------------------------------------------------
+ 01.10.2015 10:33 : Starting getRaw_Themi
+-------------------------------------------------
+Setting up . . . . . . done.
+Getting precipitation data . . . . . . done.
+Getting temperature data . . . . . . done.
+Getting forecast data . . . . . . done.
+Getting WMO station data . . . . . . done.
+Getting eNDVI data . . . . . . done.
+Getting iMoMo station data. . . . . . done.
+-------------------------------------------------
+ 01.10.2015 10:42 : getRaw_Themi successfully finished!
+-------------------------------------------------
+-------------------------------------------------
+ 02.10.2015 14:02 : Starting getRaw_Themi
+-------------------------------------------------
+Setting up . . . . . . done.
+Getting precipitation data . . . -------------------------------------------------
+ 02.10.2015 14:03 : Starting getRaw_Themi
+-------------------------------------------------
+Setting up . . . . . . done.
+Getting precipitation data . . . . . . done.
+Getting temperature data . . . . . . done.
+Getting forecast data . . . . . . done.
+Getting WMO station data . . . . . . done.
+Getting eNDVI data . . . . . . done.
+Getting iMoMo station data. . . . . . done.
+-------------------------------------------------
+ 02.10.2015 14:15 : getRaw_Themi successfully finished!
+-------------------------------------------------
+-------------------------------------------------
+ 02.10.2015 14:44 : Starting getRaw_Themi
+-------------------------------------------------
+Setting up . . . . . . done.
+Getting precipitation data . . . . . . done.
+Getting temperature data . . . . . . done.
+Getting forecast data . . . . . . done.
+Getting WMO station data . . . . . . done.
+Getting eNDVI data . . . . . . done.
+Getting iMoMo station data. . . . . . done.
+-------------------------------------------------
+ 02.10.2015 14:56 : getRaw_Themi successfully finished!
+-------------------------------------------------
