@@ -1,5 +1,8 @@
-testRunModel tests if the data read in runModel_Themi corresponds to the data 
-that is stored in runModel_Themi. 
+testing/testRunModel contains a simple hand made testing suite for runModel_Themi.
 
-This test is fully automatic. Just run testRunModel and look at the output on 
-the matlab console.
+testReadingSubAndForecastDataAndWritingDB.m tests if the data read in 
+runModel_Themi corresponds to the data that is stored in runModel_Themi. 
+
+testAssimilation.m creates a test environment for assimilation.m, runs 
+assimilation.m and tests the results against expected values. The test 
+environment is cleaned up automatically by testAssimilation.m.

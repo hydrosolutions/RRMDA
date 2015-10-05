@@ -25,7 +25,7 @@ try
   fid = fopen(strcat(current_dir,filesep,'compare_data.log'),'w+');
   doublefprintf(fid,'-----\n');
   c = clock;
-  doublefprintf(fid,'START %2d.%2d %4d, %2d:%2d\n',c(3),c(2),c(1),c(4),c(5));
+  doublefprintf(fid,'START compare_data() %2d.%2d %4d, %2d:%2d\n',c(3),c(2),c(1),c(4),c(5));
 catch e
   fprintf('Problem opening file log for writing.\n')
   fprintf('Message: %s\n',e.message);
