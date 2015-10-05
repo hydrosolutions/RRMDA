@@ -1,5 +1,8 @@
 RRM_v0.201510051148
 
-Unit tests for getRaw, processRaw, and runModel are added. 
+Rainfall runoff model with assimilation of multiple data types. Software designed within the iMoMo framework. 
 
-This release is fully compatible with the first release RRM_v0.201509251048.
+Copyright (C) 2015 hydrosolutions ltd. Zurich, Switzerland
+
+This file is part of iMoMo-Matlab. iMoMo-Matlab is a free software and
+licensed under the Free Software Foundation. See LICENSE for details. 
