@@ -2,9 +2,10 @@
 Thumbs.db
 ehthumbs.db
 
-# Ignore log files
+# Ignore log and backup files
 *.log
 *.stdout
+*.m~
 
 # Folder config file
 Desktop.ini
