@@ -1,7 +1,5 @@
-RRM_v0.201509251048
+RRM_v0.201510051148
 
-This is a copy of the online model taken on September 25, 2015 at 10:48. This
-copy is the new basis for the development master on github. Changes in the code
-must never be done in the online version but a branch from the github master has
-to be made, changes have to be made and the code has to be tested offline before
-a new release of the code can be copied to the server.
+Unit tests for getRaw, processRaw, and runModel are added. 
+
+This release is fully compatible with the first release RRM_v0.201509251048.
