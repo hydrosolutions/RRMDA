@@ -6,7 +6,7 @@
 %
 % Last modified:  23/04/2015
 %
-% Author:         Sebastian Stoll, Jules enze, Tobias  (hydrosolutions ltd.)
+% Author:         Sebastian Stoll, Jules Henze, Tobias  (hydrosolutions ltd.)
 %
 % Purpose:        Script that assimilates the states and run the model.
 %
