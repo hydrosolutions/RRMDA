@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Label</key>
+	<string>org.imomowb.realTimeModel</string>
+	<key>ProgramArguments</key>
+	<array>
+		<string><!—PATH_TO—>python</string>
+		<string><!—PATH_TO—>app/Themi/src/matlab_oda_batcher_offline.py</string>
+	</array>
+	<key>StandardOutPath</key>
+	<string><!—PATH_TO—>daemon.stdout</string>
+	<key>StandardErrorPath</key>
+	<string><!—PATH_TO—>daemon.log</string>
+	<key>WorkingDirectory</key>
+	<string><!—PATH_TO—>app/Themi/src</string>
+	<key>StartCalendarInterval</key>
+	<array>
+		<dict>
+			<key>Hour</key>
+			<integer>18</integer>
+			<key>Minute</key>
+			<integer>0</integer>
+		</dict>
+	</array>
+	<key>KeepAlive</key>
+	<false/>
+	<key>UserName</key>
+	<string><!—UserName—></string>
+	<key>GroupName</key>
+	<string><!—GroupName, e.g. staff—></string>
+</dict>
+</plist>

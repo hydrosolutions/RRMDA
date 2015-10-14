@@ -37,9 +37,9 @@ SMTP_PASSWORD = str('iMoMo567')
 
 
 # Local methods.
-def callMatlab(args, numberOfTrials, output_dir, out_buffer, out_path, recipients, logger, command):
+def systemCall(args, numberOfTrials, output_dir, out_buffer, out_path, recipients, command):
   '''
-  Call to matlab
+  Call to system
   
   @arg commandLine String with system command line.
   @arg numberOfTrials Integer specifying how many times the command is executed.
@@ -47,23 +47,15 @@ def callMatlab(args, numberOfTrials, output_dir, out_buffer, out_path, recipient
   @arg out_buffer Temporary output buffer.
   @arg out_path Path where temporary output is stored.
   @arg recipients List of strings with mail recipients.
-  @arg logger object.
+  @arg command String with short name for command.
   
   @return returnValue Boolean 0 for successfull call to command and 1 for failure.
   '''
   logger.debug('Arguments: %s', args)
   
   for i in range(0,numberOfTrials):  # Try to execute args numberOfTrials times.
-    # matlab.engine does not work when computer is not in use. Use system commands instead.
-    #eng = matlab.engine.start_matlab()
-    #returnValue = eng.<functionname>()
-    #eng.quit()
     try:
-      #print "-------------"
       process = subprocess.check_call(args, stdout=out_buffer, stderr=subprocess.STDOUT,shell=True)
-      #process.wait()  # Waits for subprocess to finish and sends returncode.
-      #returnValue = process.returncode
-      #if (returnValue==0):
       logger.debug('process = %s',process)
       logger.debug('Command %s successful, continuing.', command)
       returnValue = process
@@ -78,14 +70,7 @@ def callMatlab(args, numberOfTrials, output_dir, out_buffer, out_path, recipient
       logger.warning('Command %s failed for the %d(st,nd,rd,th) time.', command, i+1)
       returnValue = 2
       with open(os.path.join(output_dir, 'error.txt'), 'w') as ferr:
-        ferr.write("Error calling matlab with %s\n" % args)
-      '''
-      with open(os.path.join(output_dir, 'error.log'), 'w') as flog:
-        readable_file = os.fdopen(out_buffer, 'r')  # Read temporary file.
-        readable_file.seek(0)  # Go to the beginning of the file.
-        flog.write(readable_file.read())  # Copy the temporary log file to flog.
-        readable_file.close()  # Close the temporary file.
-      '''
+        ferr.write("Error calling system with %s\n" % args)
 
     if (returnValue != 0):
       if i < numberOfTrials-1:
@@ -131,7 +116,7 @@ def testType(variable,expected_type):
   @param expected_type Python type.
   """
   if (type(variable) == expected_type) == False:
-    print "Error: Type missmatch. Found type(%s)=%s but expected %s" %(eval(variable),type(variable),expected_type)
+    logger.error("Error: Type missmatch. Found type(%s)=%s but expected %s" eval(variable),type(variable),expected_type)
     exit()
 
 
@@ -167,32 +152,44 @@ def sendEmail(recipients,subject,message):
     server.starttls()  # Encript connection.
     server.login(SMTP_USERNAME,SMTP_PASSWORD)
     server.sendmail(SMTP_SENDER, recipients, msg.as_string())
-    print "Successfully sent e-mail."
+    logger.info("Successfully sent e-mail.")
   except:
     # Sleep and try again.
     try:
-      print "Failed to send e-mail the first time. Sleep for 10 min and try again."
+      logger.info("Failed to send e-mail the first time. Sleep for 10 min and try again.")
       for i in range(600):
         time.sleep(1)  # Sleep for 10 minutes.
       server.starttls()
       server.login(SMTP_USERNAME,SMTP_PASSWORD)
       server.sendmail(SMTP_SENDER,recipients,msg.as_string())
-      print "Successfully sent e-mail."
+      logger.info("Successfully sent e-mail.")
     except KeyboardInterrupt:
+      logger.info("Keyboard interrupt. Exiting.")
       sys.exit("Keyboard interrupt. Exiting.")
     except:
-      print "Error: unable to send e-mail"
+      logger.error("Error: unable to send e-mail")
   finally:
     server.quit
 
 def main():
   """
-  main
+  main()
   
-  
+  Specification of e-mail-recipients and model name.
+  Setting up of logger and matlab commands.
+  Procedure of main with system calls (sc):
+    - sc matlab getRaw_Themi
+    - sc matlab processRaw_Themi
+    - sc openDA runModel_Themi
+   (- sc matlab sendtoDB_Themi)
+   (- sc matlab matlabMail_Themi)
+   (- sc matlab controlData_Themi)
+    - wrapping up
+  System calls that are commented out in the offline version are in brackets.
   """
+  ## Specify e-mail recipients and model name.
   # Set up e-mail.
-  recipients = [str('marti@hydrosolutions.ch'),str('martibeatrice@gmail.com')]
+  recipients = [str('marti@hydrosolutions.ch')] # Comma-separate multiple recipients.
   subject = """imomowb SUCCESS"""
   
   # Model name.
@@ -201,11 +198,12 @@ def main():
   #---------------------
   # Do not edit below!
   
-  # Error messages are piped to the directory temp_log.
+  
+  ## Setting up of logger.
+  # Error messages are piped to the directory where this file is stored.
   output_dir = os.path.realpath(os.path.join(os.path.dirname(__file__),os.pardir))
   
-  # Set up logger.
-  logger = logging.getLogger('matlab_batcher')
+  logger = logging.getLogger('matlab_oda_batcher')
   logger.setLevel(logging.DEBUG)
   consoleHandler = logging.StreamHandler()
   consoleHandler.setLevel(logging.DEBUG)
@@ -224,6 +222,8 @@ def main():
   logger.debug('tempfile out_buffer: %s',out_buffer)
   logger.debug('tempfile out_path: %s',str(out_path))
   
+  
+  ## Setting up of matlab commands.
   # The matlab user path needs to be adapted.
   homeDir = os.path.realpath(os.path.join(os.path.dirname(__file__),'..','..','..'))
   logger.debug('homeDir: %s',homeDir)
@@ -241,20 +241,17 @@ def main():
   matlabPathCommand = "export MATLABPATH="+addMatlabPath+"$MATLABPATH"
   logger.debug('MatlabPath: %s',matlabPathCommand)
 
-  ##
-  # Call getRaw.m
-  ##
-  
+  ## Call getRaw.m
   # Set up command.
   numberOfTrials = 2
-  commandLine = matlabPathCommand+" && echo $MATLABPATH && "+"/Applications/MATLAB_R2015a.app/bin/matlab -nodisplay -nosplash -r \"getRaw_Themi\"".format(os.path.realpath(os.path.dirname(__file__)),output_dir)
+  commandLine = matlabPathCommand+" && "+"/Applications/MATLAB_R2015a.app/bin/matlab -nodisplay -nosplash -r \"getRaw_Themi\"".format(os.path.realpath(os.path.dirname(__file__)),output_dir)
   logger.debug('commandLine: %s',commandLine)
   command = "getRaw_Themi"
   currentDateTime = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
   logger.info('Calling matlab with %s at %s . . . ',command, currentDateTime)
   # Calling matlab.
   try:
-    ret = callMatlab(commandLine, numberOfTrials, output_dir, out_buffer, out_path, recipients, logger, command)
+    ret = systemCall(commandLine, numberOfTrials, output_dir, out_buffer, out_path, recipients, command)
     if (ret == 0):
       logger.info('. . . done.')
   except (KeyboardInterrupt, SystemExit):
@@ -265,18 +262,16 @@ def main():
   
   if (ret==1):
     #sys.exit("Call to getRaw_Themi.m failed. Exiting.")
-    logger.warning('Call to getRaw_Themi.m failed. Continue anyway.')
+    logger.warning('Call to failed. Continue anyway.',command)
 
-  ##
-  # Call processRaw.m
-  ##
+  ## Call processRaw.m
   numberOfTrials = 1
   commandLine = matlabPathCommand+" && "+"/Applications/MATLAB_R2015a.app/bin/matlab -nodisplay -nosplash -r \"processRaw_Themi\"".format(os.path.realpath(os.path.dirname(__file__)),output_dir)
   command = "processRaw_Themi"
   currentDateTime = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
   logger.info('Calling matlab with %s at %s. . . ',command, currentDateTime)
   try:
-    ret = callMatlab(commandLine, numberOfTrials, output_dir, out_buffer, out_path, recipients, logger, command)
+    ret = systemCall(commandLine, numberOfTrials, output_dir, out_buffer, out_path, recipients, command)
     if (ret == 0):
       logger.info('. . . done.')
   except (KeyboardInterrupt, SystemExit):
@@ -284,11 +279,28 @@ def main():
 
   if (ret==1):
     #sys.exit("Call to processRaw_Themi.m fialed. Exiting.")
-    logger.warning('Call to processRaw_Themi.m filed. Continue anyway.')
+    logger.warning('Call to %s failed. Continue anyway.',command)
 
-  ##
-  # Call runModel.m
-  ##
+  ## Call openDA.
+  # openDA needs to be propperly installed!
+  numberOfTrials = 1
+  commandLine = "oda_run.sh RRMDA_Themi.oda"
+  command = "RRMDA_Themi.oda"
+  currentDateTime = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+  logger.info('Calling matlab with %s at %s. . . ',command,currentDateTime)
+  try:
+    ret = systemCall(commandLine, numberOfTrials, output_dir, out_buffer, out_path, recipients, command)
+    if (ret == 0):
+      logger.info('. . . done.')
+  except (KeyboardInterrupt, SystemExit):
+    sys.exit("Keyboard interrupt. Exiting.")
+
+  if (ret == 1):
+    logger.warning('Call to %s failed. Continues anyway.', command)
+
+
+  '''
+  ## Call runModel.m
   numberOfTrials = 1
   commandLine = matlabPathCommand+" && "+"/Applications/MATLAB_R2015a.app/bin/matlab -nodisplay -nosplash -r \"runModel_Themi\"".format(os.path.realpath(os.path.dirname(__file__)),output_dir)
   command = "runModel_Themi"
@@ -296,7 +308,7 @@ def main():
   logger.info('Calling matlab with %s at %s . . . ',command, currentDateTime)
   ret = 2
   try:
-    ret = callMatlab(commandLine, numberOfTrials, output_dir, out_buffer, out_path, recipients, logger, command)
+    ret = systemCall(commandLine, numberOfTrials, output_dir, out_buffer, out_path, recipients, command)
     if (ret == 0):
       logger.info('. . . done.')
   except (KeyboardInterrupt, SystemExit):
@@ -304,22 +316,24 @@ def main():
 
   if (ret==1):
     #sys.exit("Call to runModel_Themi.m fialed. Exiting.")
-    logger.warning('Call to runModel_Themi.m failed. Continue anyway.')
+    logger.warning('Call to %s failed. Continue anyway.',command)
 
   if (ret==2):
     logger.debug('ret=2')
+  '''
 
 
-  ##
-  # Call sendtoDB_Themi.m
-  ##
+  ## Offline mode: no sending of data to data base, no sending of matlab mails,
+  ## and not controling of data.
+  '''
+  ## Call sendtoDB_Themi.m
   numberOfTrials = 1
   commandLine = matlabPathCommand+" && "+"/Applications/MATLAB_R2015a.app/bin/matlab -nodisplay -nosplash -r \"sendtoDB_Themi\"".format(os.path.realpath(os.path.dirname(__file__)),output_dir)
   command = "sendtoDB_Themi"
   currentDateTime = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
   logger.info('Calling matlab with %s at %s . . . ',command, currentDateTime)
   try:
-    ret = callMatlab(commandLine, numberOfTrials, output_dir, out_buffer, out_path, recipients, logger, command)
+    ret = systemCall(commandLine, numberOfTrials, output_dir, out_buffer, out_path, recipients, command)
     if (ret == 0):
       logger.info('. . . done.')
   except (KeyboardInterrupt, SystemExit):
@@ -327,19 +341,17 @@ def main():
         
   if (ret==1):
     #sys.exit("Call to sendtoDB_Themi.m fialed. Exiting.")
-    logger.warning('Call to sendtoDB_Themi.m failed. Done.')
+    logger.warning('Call to %s failed. Done.', command)
 
 
-  ##
-  # Call MatlabMail_Themi.m
-  ##
+  ## Call MatlabMail_Themi.m
   numberOfTrials = 1
   commandLine = matlabPathCommand+" && "+"/Applications/MATLAB_R2015a.app/bin/matlab -nodisplay -nosplash -r \"MatlabMail_Themi\"".format(os.path.realpath(os.path.dirname(__file__)),output_dir)
   command = "MatlabMail_Themi"
   currentDateTime = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
   logger.info('Calling matlab with %s at %s . . . ',command, currentDateTime)
   try:
-    ret = callMatlab(commandLine, numberOfTrials, output_dir, out_buffer, out_path, recipients, logger, command)
+    ret = systemCall(commandLine, numberOfTrials, output_dir, out_buffer, out_path, recipients, command)
     if (ret == 0):
       logger.info('. . . done.')
   except (KeyboardInterrupt, SystemExit):
@@ -347,34 +359,35 @@ def main():
   
   if (ret==1):
     #sys.exit("Call to MatlabMail_Themi.m fialed. Exiting.")
-    logger.warning('Call to MatlabMail_Themi.m failed. Continue anyway.')
+    logger.warning('Call to %s failed. Continue anyway.',command)
 
 
-  ##
-  # Call controlData_Themi.m
-  ##
+  ## Call controlData_Themi.m
   numberOfTrials = 1
   commandLine = matlabPathCommand+" && "+"/Applications/MATLAB_R2015a.app/bin/matlab -nodisplay -nosplash -r \"controlData_Themi\"".format(os.path.realpath(os.path.dirname(__file__)),output_dir)
   command = "controlData_Themi"
   currentDateTime = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
   logger.info('Calling matlab with %s at %s . . . ',command, currentDateTime)
   try:
-    ret = callMatlab(commandLine, numberOfTrials, output_dir, out_buffer, out_path, recipients, logger, command)
+    ret = systemCall(commandLine, numberOfTrials, output_dir, out_buffer, out_path, recipients, command)
     if (ret == 0):
       logger.info('. . . done.')
   except (KeyboardInterrupt, SystemExit):
     sys.exit("Keyboard interrupt. Exiting.")
-  
+  '''
 
+  ## Wrapping up.
   if (ret == 0):
     currentDateTime = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     logger.info('Done at %s. Sending success mail.',currentDateTime)
     message = 'Successfully ran on-line model.'
     sendEmail(recipients,subject,message)
+
+  '''
   elif (ret==1):
     #sys.exit("Call to controlData_Themi.m fialed. Exiting.")
-    logger.warning('Call to controlData_Themi.m failed. Done.')
-  
+    logger.warning('Call to %s failed. Done.',command)
+  '''
 
 
 # Main.
