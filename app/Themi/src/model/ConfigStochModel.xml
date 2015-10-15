@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blackBoxStochModel xmlns="http://www.openda.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openda.org http://schemas.openda.org/blackBoxStochModelConfig.xsd">
+    
+    <modelConfig>
+        <file>./ModelConfig.xml</file>
+    </modelConfig>
+    
+    <vectorSpecification>
+        <!-- no specification of parameters is read for the kalman filter algorithms. This part is commented out to make sure to avoid problems.
+        <parameters>
+          <regularisationConstant>
+            <stdDev value="0.05" transformation="ln"/>
+            <vector id="<some_ID>"/>
+          </regularisationConstant>
+        </parameters>
+        -->
+        
+        <state>
+            
+            <!-- state vector which is also the predictor -->
+            <vector id="Q1"/> <!-- discharge -->
+            <vector id="Q2"/>
+            <vector id="Q3"/>
+            <vector id="Q4"/>
+            <vector id="Q5"/>
+            <vector id="Q6"/>
+            <vector id="Q7"/>
+            <vector id="Q8"/>
+            
+            <!-- states which are not measures -->
+            <vector id="S1"/> <!-- soil moisture storage -->
+            <vector id="S2"/>
+            <vector id="S3"/>
+            <vector id="S4"/>
+            <vector id="S5"/>
+            <vector id="S6"/>
+            <vector id="S7"/>
+            <vector id="S8"/>
+            <vector id="G1"/> <!-- ground water storage -->
+            <vector id="G2"/>
+            <vector id="G3"/>
+            <vector id="G4"/>
+            <vector id="G5"/>
+            <vector id="G6"/>
+            <vector id="G7"/>
+            <vector id="G8"/>
+            <vector id="ETact1"/> <!-- potential evapotranspiration -->
+            <vector id="ETact2"/>
+            <vector id="ETact3"/>
+            <vector id="ETact4"/>
+            <vector id="ETact5"/>
+            <vector id="ETact6"/>
+            <vector id="ETact7"/>
+            <vector id="ETact8"/>
+            
+            <!-- parameters are added to the augmented state vector -->
+            <vector id="a11"/> <!-- alpha 1 -->
+            <vector id="a12"/>
+            <vector id="a13"/>
+            <vector id="a14"/>
+            <vector id="a15"/>
+            <vector id="a16"/>
+            <vector id="a17"/>
+            <vector id="a18"/>
+            <vector id="a21"/> <!-- alpha 2 -->
+            <vector id="a22"/>
+            <vector id="a23"/>
+            <vector id="a24"/>
+            <vector id="a25"/>
+            <vector id="a26"/>
+            <vector id="a27"/>
+            <vector id="a28"/>
+            <vector id="a31"/> <!-- d -->
+            <vector id="a32"/>
+            <vector id="a33"/>
+            <vector id="a34"/>
+            <vector id="a35"/>
+            <vector id="a36"/>
+            <vector id="a37"/>
+            <vector id="a38"/>
+            <vector id="Smax1"/> <!-- maximum soil moisture storage -->
+            <vector id="Smax2"/>
+            <vector id="Smax3"/>
+            <vector id="Smax4"/>
+            <vector id="Smax5"/>
+            <vector id="Smax6"/>
+            <vector id="Smax7"/>
+            <vector id="Smax8"/>
+            
+            <!-- noise on current states -->
+            <noiseModel id="noiseModelDischarge" className="org.openda.noiseModels.TimeSeriesNoiseModelFactory" workingDirectory=".">
+                <configFile>NoiseModel_discharge.xml</configFile>
+                <exchangeItems>
+                    <exchangeItem id="noiseQ1" operation="add">
+                        <modelExchangeItem id="Q1"/>
+                    </exchangeItem>
+                    <exchangeItem id="noiseQ2" operation="add">
+                        <modelExchangeItem id="Q2"/>
+                    </exchangeItem>
+                    <exchangeItem id="noiseQ3" operation="add">
+                      <modelExchangeItem id="Q3"/>
+                    </exchangeItem>
+                    <exchangeItem id="noiseQ4" operation="add">
+                      <modelExchangeItem id="Q4"/>
+                    </exchangeItem>
+                    <exchangeItem id="noiseQ5" operation="add">
+                      <modelExchangeItem id="Q5"/>
+                    </exchangeItem>
+                    <exchangeItem id="noiseQ6" operation="add">
+                      <modelExchangeItem id="Q6"/>
+                    </exchangeItem>
+                    <exchangeItem id="noiseQ7" operation="add">
+                      <modelExchangeItem id="Q7"/>
+                    </exchangeItem>
+                    <exchangeItem id="noiseQ8" operation="add">
+                      <modelExchangeItem id="Q8"/>
+                    </exchangeItem>
+                </exchangeItems>
+            </noiseModel>
+            
+            <noiseModel id="noiseModelSoilMoisture" className="org.openda.noiseModels.TimeSeriesNoiseModelFactory" workingDirectory=".">
+                <configFile>NoiseModel_soilMoisture.xml</configFile>
+                <exchangeItems>
+                    <exchangeItem id="noiseS1" operation="add">
+                        <modelExchangeItem id="S1"/>
+                    </exchangeItem>
+                    <exchangeItem id="noiseS2" operation="add">
+                      <modelExchangeItem id="S2"/>
+                    </exchangeItem>
+                    <exchangeItem id="noiseS3" operation="add">
+                      <modelExchangeItem id="S3"/>
+                    </exchangeItem>
+                    <exchangeItem id="noiseS4" operation="add">
+                      <modelExchangeItem id="S4"/>
+                    </exchangeItem>
+                    <exchangeItem id="noiseS5" operation="add">
+                      <modelExchangeItem id="S5"/>
+                    </exchangeItem>
+                    <exchangeItem id="noiseS6" operation="add">
+                      <modelExchangeItem id="S6"/>
+                    </exchangeItem>
+                    <exchangeItem id="noiseS7" operation="add">
+                      <modelExchangeItem id="S7"/>
+                    </exchangeItem>
+                    <exchangeItem id="noiseS8" operation="add">
+                      <modelExchangeItem id="S8"/>
+                    </exchangeItem>
+                </exchangeItems>
+            </noiseModel>
+            
+            <noiseModel id="noiseModelGroundwaterStorage" className="org.openda.noiseModels.TimeSeriesNoiseModelFactory" workingDirectory=".">
+              <configFile>NoiseModel_GroundwaterStorage.xml</configFile>
+              <exchangeItems>
+                <exchangeItem id="noiseG1" operation="add">
+                  <modelExchangeItem id="G1"/>
+                </exchangeItem>
+                <exchangeItem id="noiseG2" operation="add">
+                  <modelExchangeItem id="G2"/>
+                </exchangeItem>
+                <exchangeItem id="noiseG3" operation="add">
+                  <modelExchangeItem id="G3"/>
+                </exchangeItem>
+                <exchangeItem id="noiseG4" operation="add">
+                  <modelExchangeItem id="G4"/>
+                </exchangeItem>
+                <exchangeItem id="noiseG5" operation="add">
+                  <modelExchangeItem id="G5"/>
+                </exchangeItem>
+                <exchangeItem id="noiseG6" operation="add">
+                  <modelExchangeItem id="G6"/>
+                </exchangeItem>
+                <exchangeItem id="noiseG7" operation="add">
+                  <modelExchangeItem id="G7"/>
+                </exchangeItem>
+                <exchangeItem id="noiseG8" operation="add">
+                  <modelExchangeItem id="G8"/>
+                </exchangeItem>
+              </exchangeItems>
+            </noiseModel>
+            
+            <noiseModel id="noiseModelETact" className="org.openda.noiseModels.TimeSeriesNoiseModelFactory" workingDirectory=".">
+              <configFile>NoiseModel_ETact.xml</configFile>
+              <exchangeItems>
+                <exchangeItem id="noiseETact1" operation="add">
+                  <modelExchangeItem id="ETact1"/>
+                </exchangeItem>
+                <exchangeItem id="noiseETact2" operation="add">
+                  <modelExchangeItem id="ETact2"/>
+                </exchangeItem>
+                <exchangeItem id="noiseETact3" operation="add">
+                  <modelExchangeItem id="ETact3"/>
+                </exchangeItem>
+                <exchangeItem id="noiseETact4" operation="add">
+                  <modelExchangeItem id="ETact4"/>
+                </exchangeItem>
+                <exchangeItem id="noiseETact5" operation="add">
+                  <modelExchangeItem id="ETact5"/>
+                </exchangeItem>
+                <exchangeItem id="noiseETact6" operation="add">
+                  <modelExchangeItem id="ETact6"/>
+                </exchangeItem>
+                <exchangeItem id="noiseETact7" operation="add">
+                  <modelExchangeItem id="ETact7"/>
+                </exchangeItem>
+                <exchangeItem id="noiseETact8" operation="add">
+                  <modelExchangeItem id="ETact8"/>
+                </exchangeItem>
+              </exchangeItems>
+            </noiseModel>
+            
+            <!-- noise on parameters -->
+            <noiseModel id="noiseModelAlpha1" className="org.openda.noiseModels.TimeSeriesNoiseModelFactory" workingDirectory=".">
+              <configFile>NoiseModel_alpha1.xml</configFile>
+              <exchangeItems>
+                <exchangeItem id="noisea11" operation="add">
+                  <modelExchangeItem id="a11"/>
+                </exchangeItem>
+                <exchangeItem id="noisea12" operation="add">
+                  <modelExchangeItem id="a12"/>
+                </exchangeItem>
+                <exchangeItem id="noisea13" operation="add">
+                  <modelExchangeItem id="a13"/>
+                </exchangeItem>
+                <exchangeItem id="noisea14" operation="add">
+                  <modelExchangeItem id="a14"/>
+                </exchangeItem>
+                <exchangeItem id="noisea15" operation="add">
+                  <modelExchangeItem id="a15"/>
+                </exchangeItem>
+                <exchangeItem id="noisea16" operation="add">
+                  <modelExchangeItem id="a16"/>
+                </exchangeItem>
+                <exchangeItem id="noisea17" operation="add">
+                  <modelExchangeItem id="a17"/>
+                </exchangeItem>
+                <exchangeItem id="noisea18" operation="add">
+                  <modelExchangeItem id="a18"/>
+                </exchangeItem>
+              </exchangeItems>
+            </noiseModel>
+            
+            <noiseModel id="noiseModelAlpha2" className="org.openda.noiseModels.TimeSeriesNoiseModelFactory" workingDirectory=".">
+              <configFile>NoiseModel_alpha2.xml</configFile>
+              <exchangeItems>
+                <exchangeItem id="noisea21" operation="add">
+                  <modelExchangeItem id="a21"/>
+                </exchangeItem>
+                <exchangeItem id="noisea22" operation="add">
+                  <modelExchangeItem id="a22"/>
+                </exchangeItem>
+                <exchangeItem id="noisea23" operation="add">
+                  <modelExchangeItem id="a23"/>
+                </exchangeItem>
+                <exchangeItem id="noisea24" operation="add">
+                  <modelExchangeItem id="a24"/>
+                </exchangeItem>
+                <exchangeItem id="noisea25" operation="add">
+                  <modelExchangeItem id="a25"/>
+                </exchangeItem>
+                <exchangeItem id="noisea26" operation="add">
+                  <modelExchangeItem id="a26"/>
+                </exchangeItem>
+                <exchangeItem id="noisea27" operation="add">
+                  <modelExchangeItem id="a27"/>
+                </exchangeItem>
+                <exchangeItem id="noisea28" operation="add">
+                  <modelExchangeItem id="a28"/>
+                </exchangeItem>
+              </exchangeItems>
+            </noiseModel>
+            
+            <noiseModel id="noiseModelD" className="org.openda.noiseModels.TimeSeriesNoiseModelFactory" workingDirectory=".">
+              <configFile>NoiseModel_d.xml</configFile>
+              <exchangeItems>
+                <exchangeItem id="noisea31" operation="add">
+                  <modelExchangeItem id="a31"/>
+                </exchangeItem>
+                <exchangeItem id="noisea32" operation="add">
+                  <modelExchangeItem id="a32"/>
+                </exchangeItem>
+                <exchangeItem id="noisea33" operation="add">
+                  <modelExchangeItem id="a33"/>
+                </exchangeItem>
+                <exchangeItem id="noisea34" operation="add">
+                  <modelExchangeItem id="a34"/>
+                </exchangeItem>
+                <exchangeItem id="noisea35" operation="add">
+                  <modelExchangeItem id="a35"/>
+                </exchangeItem>
+                <exchangeItem id="noisea36" operation="add">
+                  <modelExchangeItem id="a36"/>
+                </exchangeItem>
+                <exchangeItem id="noisea37" operation="add">
+                  <modelExchangeItem id="a37"/>
+                </exchangeItem>
+                <exchangeItem id="noisea38" operation="add">
+                  <modelExchangeItem id="a38"/>
+                </exchangeItem>
+              </exchangeItems>
+            </noiseModel>
+            
+            <noiseModel id="noiseModelSmax" className="org.openda.noiseModels.TimeSeriesNoiseModelFactory" workingDirectory=".">
+              <configFile>NoiseModel_Smax.xml</configFile>
+              <exchangeItems>
+                <exchangeItem id="noiseSmax1" operation="add">
+                  <modelExchangeItem id="Smax1"/>
+                </exchangeItem>
+                <exchangeItem id="noiseSmax2" operation="add">
+                  <modelExchangeItem id="Smax2"/>
+                </exchangeItem>
+                <exchangeItem id="noiseSmax3" operation="add">
+                  <modelExchangeItem id="Smax3"/>
+                </exchangeItem>
+                <exchangeItem id="noiseSmax4" operation="add">
+                  <modelExchangeItem id="Smax4"/>
+                </exchangeItem>
+                <exchangeItem id="noiseSmax5" operation="add">
+                  <modelExchangeItem id="Smax5"/>
+                </exchangeItem>
+                <exchangeItem id="noiseSmax6" operation="add">
+                  <modelExchangeItem id="Smax6"/>
+                </exchangeItem>
+                <exchangeItem id="noiseSmax7" operation="add">
+                  <modelExchangeItem id="Smax7"/>
+                </exchangeItem>
+                <exchangeItem id="noiseSmax8" operation="add">
+                  <modelExchangeItem id="Smax8"/>
+                </exchangeItem>
+              </exchangeItems>
+            </noiseModel>
+            
+        </state>
+        
+        <predictor>
+            <vector id="Q1"/>
+            <vector id="Q2"/>
+            <vector id="Q3"/>
+            <vector id="Q4"/>
+            <vector id="Q5"/>
+            <vector id="Q6"/>
+            <vector id="Q7"/>
+            <vector id="Q8"/>
+        </predictor>
+    </vectorSpecification>
+    
+    <!-- specify here if wish to modify the names of the restart directories from the default names. -->
+    <restartInfo dirPrefix="./StochModelRestart_" noiseModelPrefix="./StochModelRestartNoiseModel_" modelStateFile="StochModelRestartModelStateFiles.zip">
+    </restartInfo>
+    
+</blackBoxStochModel>

@@ -1,5 +1,17 @@
 function [data1] = getObservation(type,day,nC,paths)
-
+%% function data1 = getObservation(type, day, nC, paths)
+%
+% Reads in the current iMoMo data and extracts discharge measurements for
+% each subcatchment. 
+%
+% @arg type (string) indicating type of observed data. E.g. 'Q'. 
+% @arg day  (int) current time step to compute.
+% @arg nC   (int) number of sub-catchments in the model area. 
+% @arg paths (struct) with paths to relevant directories.
+% @return data1 (double array) with dimension [1,nC] containing the newest 
+%           observation for each subcatchment.
+%
+% 
 
 %Find file
 cd(strcat(paths.data,'raw/imomo'))
@@ -28,7 +40,7 @@ if exist(strcat(num2str(day)), 'file')
             if isempty(cData{C}) %if there is no observation for that subcatchment
                 data1(C)=NaN;
 
-            else % if there is a observation for that subcatchment
+            else % if there is a observation for that subcatchment get the latest observations.
                 days=datenum({cData{C}.dateTimeUTC},'yyyy-mm-dd HH:MM:SS');
                 [dum idD] = max(days);
                 dum1=cData{C};

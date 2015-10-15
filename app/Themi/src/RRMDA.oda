@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openDaApplication xmlns:oda="http://www.openda.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openda.org http://schemas.openda.org/openDaApplication.xsd">
+	<stochObserver className="org.openda.model_RainfallRunoffZhang.ASCIITimeSeriesStochObserver">
+		<workingDirectory>./observer</workingDirectory>
+		<configFile>Observations.xml</configFile>
+	</stochObserver>
+	<stochModelFactory className="org.openda.blackbox.wrapper.BBStochModelFactory">
+		<workingDirectory>./model</workingDirectory>
+		<configFile>StochModel.xml</configFile>
+	</stochModelFactory>
+	<algorithm className="org.openda.algorithms.kalmanFilter.EnKF">
+		<workingDirectory>./algorithms</workingDirectory>
+		<configString>EnKF.xml</configString>
+	</algorithm>
+	<!--<resultWriters>-->
+  <resultWriter className="org.openda.resultwriters.MatlabResultWriter">
+    <workingDirectory>.</workingDirectory>
+    <configFile>RRMDA_EnKF.m</configFile>
+      <selection>
+        <resultItem outputLevel="All"/>
+      </selection>
+  </resultWriter>
+    <!--
+    <resultWriter className="org.openda.resultwriters.TextTableWriter">
+      <workingDirectory>.</workingDirectory>
+      <configFile>EnKFaugmentedNew_results.csv</configFile>
+    </resultWriter>
+    <resultWriter className="org.openda.resultwriters.NetcdfResultWriter">
+      <workingDirectory>.</workingDirectory>
+      <configFile>EnKFaugmentedNew_results.nc</configFile>
+    </resultWriter>
+    -->
+  <!--</resultWriters>-->
+  <!--
+  <restartInFile>restartOutFilePrefix193002020000.zip</restartInFile>
+   -->
+  <restartOutFilePrefix>RESTART_</restartOutFilePrefix>
+</openDaApplication>
