@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Class implementing the blackbox model factory org.openda.wrappers.BlackBoxWrapper  -->
+<blackBoxModelConfig xmlns="http://www.openda.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openda.org http://schemas.openda.org/blackBoxModelConfig.xsd">
+
+    <wrapperConfig>
+        <file>./WrapperConfig.xml</file>
+    </wrapperConfig>
+    
+    <aliasValues>
+        <!-- These aliases can be used to setup a specific experiment. -->
+        <!-- The wrapperConfig contains references to the labels -->
+        <!-- The alias "instanceNumber" is special, its value is set by the Factory -->
+        <alias key="templateDir" value="input"/>
+        <alias key="instanceDir" value="output/work"/>
+        <alias key="binDir" value="bin"/>
+        <alias key="EmatFile" value="E.mat"/>
+    </aliasValues>
+    
+    <timeInfoExchangeItems start="currentTime" end="finalTime" timeStep="simulationTimeStep"/>
+    
+    <exchangeItems>
+        <!-- parameters -->
+        <vector id="a11" ioObjectId="Emat"/>
+        <vector id="a12" ioObjectId="Emat"/>
+        <vector id="a13" ioObjectId="Emat"/>
+        <vector id="a14" ioObjectId="Emat"/>
+        <vector id="a15" ioObjectId="Emat"/>
+        <vector id="a16" ioObjectId="Emat"/>
+        <vector id="a17" ioObjectId="Emat"/>
+        <vector id="a18" ioObjectId="Emat"/>
+        <vector id="a21" ioObjectId="Emat"/>
+        <vector id="a22" ioObjectId="Emat"/>
+        <vector id="a23" ioObjectId="Emat"/>
+        <vector id="a24" ioObjectId="Emat"/>
+        <vector id="a25" ioObjectId="Emat"/>
+        <vector id="a26" ioObjectId="Emat"/>
+        <vector id="a27" ioObjectId="Emat"/>
+        <vector id="a28" ioObjectId="Emat"/>
+        <vector id="a31" ioObjectId="Emat"/>
+        <vector id="a32" ioObjectId="Emat"/>
+        <vector id="a33" ioObjectId="Emat"/>
+        <vector id="a34" ioObjectId="Emat"/>
+        <vector id="a35" ioObjectId="Emat"/>
+        <vector id="a36" ioObjectId="Emat"/>
+        <vector id="a37" ioObjectId="Emat"/>
+        <vector id="a38" ioObjectId="Emat"/>
+        <vector id="Smax1" ioObjectId="Emat"/>
+        <vector id="Smax2" ioObjectId="Emat"/>
+        <vector id="Smax3" ioObjectId="Emat"/>
+        <vector id="Smax4" ioObjectId="Emat"/>
+        <vector id="Smax5" ioObjectId="Emat"/>
+        <vector id="Smax6" ioObjectId="Emat"/>
+        <vector id="Smax7" ioObjectId="Emat"/>
+        <vector id="Smax8" ioObjectId="Emat"/>
+        
+        <!-- time configuration -->
+        <vector id="currentTime" ioObjectId="timeConfig" elementId="currentTime"/>
+        <vector id="finalTime" ioObjectId="timeConfig" elementId="finalTime"/>
+        <vector id="simulationTimeStep" ioObjectId="timeConfig" elementId="simulationTimeStep"/>
+        
+        <!-- states -->
+        <vector id="Q1" ioObjectId="Emat"/>
+        <vector id="Q2" ioObjectId="Emat"/>
+        <vector id="Q3" ioObjectId="Emat"/>
+        <vector id="Q4" ioObjectId="Emat"/>
+        <vector id="Q5" ioObjectId="Emat"/>
+        <vector id="Q6" ioObjectId="Emat"/>
+        <vector id="Q7" ioObjectId="Emat"/>
+        <vector id="Q8" ioObjectId="Emat"/>
+        <vector id="S1" ioObjectId="Emat"/>
+        <vector id="S2" ioObjectId="Emat"/>
+        <vector id="S3" ioObjectId="Emat"/>
+        <vector id="S4" ioObjectId="Emat"/>
+        <vector id="S5" ioObjectId="Emat"/>
+        <vector id="S6" ioObjectId="Emat"/>
+        <vector id="S7" ioObjectId="Emat"/>
+        <vector id="S8" ioObjectId="Emat"/>
+        <vector id="G1" ioObjectId="Emat"/>
+        <vector id="G2" ioObjectId="Emat"/>
+        <vector id="G3" ioObjectId="Emat"/>
+        <vector id="G4" ioObjectId="Emat"/>
+        <vector id="G5" ioObjectId="Emat"/>
+        <vector id="G6" ioObjectId="Emat"/>
+        <vector id="G7" ioObjectId="Emat"/>
+        <vector id="G8" ioObjectId="Emat"/>
+        <vector id="ETact1" ioObjectId="Emat"/>
+        <vector id="ETact2" ioObjectId="Emat"/>
+        <vector id="ETact3" ioObjectId="Emat"/>
+        <vector id="ETact4" ioObjectId="Emat"/>
+        <vector id="ETact5" ioObjectId="Emat"/>
+        <vector id="ETact6" ioObjectId="Emat"/>
+        <vector id="ETact7" ioObjectId="Emat"/>
+        <vector id="ETact8" ioObjectId="Emat"/>
+    
+    </exchangeItems>
+    
+    <doCleanUp>false</doCleanUp>
+    
+    <!-- specify where to store the restart files of the stoch model instances and which files to store. -->
+    <restartInfo dirPrefix="ModelRestart_">
+        <modelStateFile>E.mat</modelStateFile>
+    </restartInfo>
+    
+</blackBoxModelConfig>

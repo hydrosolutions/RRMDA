@@ -342,27 +342,9 @@ copyfile('getRaw.m',strcat(setup.mPath,'/src/getRaw_',handles.data.modelName,'.m
 copyfile('processRaw.m',strcat(setup.mPath,'/src/processRaw_',handles.data.modelName,'.m'))
 copyfile('runModel.m',strcat(setup.mPath,'/src/runModel_',handles.data.modelName,'.m'))
 copyfile('sendtoDB.m',strcat(setup.mPath,'/src/sendtoDB_',handles.data.modelName,'.m'))
-
-% CREATE START FILE
-cd(strcat(setup.mPath,'/src/'))
-fid = fopen('master.m', 'w');
-fprintf(fid, 'gR=timer(''TimerFcn'',''getRaw_%s'');\n',handles.data.modelName);
-fprintf(fid, 'pR=timer(''TimerFcn'',''processRaw_%s'');\n',handles.data.modelName);
-fprintf(fid, 'rM=timer(''TimerFcn'',''runModel_%s'');\n\n',handles.data.modelName);
-fprintf(fid, 'sD=timer(''TimerFcn'',''sendtoDB_%s'');\n\n',handles.data.modelName);
-fprintf(fid, 'set(gR, ''ExecutioMode'', ''fixedRate'') \n');
-fprintf(fid, 'set(gR, ''Period'', 10800); \n');
-fprintf(fid, 'set(pR, ''ExecutionMode'', ''fixedRate'') \n');
-fprintf(fid, 'set(pR, ''Period'', 10800); \n');
-fprintf(fid, 'set(rM, ''ExecutionMode'', ''fixedRate'') \n');
-fprintf(fid, 'set(rM, ''Period'', 10800); \n\n');
-fprintf(fid, 'set(sD, ''Executionode'', ''fixedRate'') \n');
-fprintf(fid, 'set(sD, ''Period'', 10800); \n\n');
-fprintf(fid, 'startat(gR, ''17:30:00''); \n');
-fprintf(fid, 'startat(pR, ''17:40:00''); \n');
-fprintf(fid, 'startat(rM, ''17:50:00''); \n');
-fprintf(fid, 'startat(sD, ''18:00:00''); \n');
-fclose(fid);
+copyfile('MatlabMail.m',strcat(setup.mPath,'/src/MatlabMail_',handles.data.modelName,'.m'))
+copyfile('controlData.m',strcat(setup.mPath,'/src/controlData_',handles.data.modelName,'.m'))
+copyfile('matlab_oda_batcher_offline.py',strcat(setup.mPath,'/src/matlab_oda_batcher_offline.py'))
 
 % COPY ENKF PARAMETER FILES
 cd(setup.mPath)

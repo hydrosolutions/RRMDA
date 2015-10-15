@@ -14,7 +14,7 @@
 % Description:   Script that assimilates the states and run the model.
 %
 %
-% Copyright (C) 2015 hydrosolutions
+% Copyright (C) 2015 hydrosolutions ltd. Zurich, Switzerland
 %
 % This file is part of iMoMo-Matlab. iMoMo-Matlab is a free software and
 % licensed under the Free Software Foundation. See LICENSE for details. 
@@ -162,8 +162,25 @@ try
     clear all
     toc
     
-catch
-    disp('Error occured, next try in 3 hours')
+    disp('---')
+    disp([datestr(today) ': runModel_Themi successfully finished!'])
+    disp('---')
+    %clearvars today
+    toc
+    
+catch ME
+    
+    disp('---')
+    disp('time')
+    nowT = datevec(now);
+    nowT = nowT(1:4)
+    disp('---')
+    disp('Error occured in runModel_Themi.m! ERROR SPECIFICS:')
+    rethrow(ME)
+    disp('---')
+    disp('Next try in 3 hours!')
+    disp('---')
+    
 end
     
     

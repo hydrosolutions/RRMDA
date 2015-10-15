@@ -1,48 +1,50 @@
-function processRaw
+function processRaw_Themi
 % Script to process the raw data from the internet.
 %
-% File:           getRaw.m
+% File:           processRaw_Themi.m
 %
 % Created:        01/12/2014
 %
-% Last modified:  01/12/2014
+% Last modified:  23/04/2015 (TS), edited output info and small cosmetic changes.
+%                 19/05/2015 (TS), Robustness increase, i.e. NaN filling in case model did not run
+%                 for more than 5 previous days.
 %
-% Author:         Sebastian Stoll (hydrosolutions ltd.)
+% Author:         Sebastian Stoll, Tobias Siegfried (hydrosolutions ltd.)
 %
 % Purpose:        Process raw data and save them.
 %
 % Description:    Process raw data and save them.
 %
 %
-% Copyright (C) 2014 hydrosolutions
+% Copyright (C) 2015 hydrosolutions ltd. Zurich, Switzerland
 %
 % This file is part of iMoMo-Matlab. iMoMo-Matlab is a free software and
 % licensed under the Free Software Foundation. See LICENSE for details.
 
 
 try
-
-%% SETUP
-tic
-clear all
-
-warning off
-
-%Today's date
-today=datenum(date);
-
-%load setup file
-load('setup.mat')
-
-%bounding box
-bblon = [setup.bBox(1) setup.bBox(3)];
-bblat = [setup.bBox(2) setup.bBox(4)];
-ndays = 0; %number of days for download of GDAS/GFS (Maximum = 6)-1
-pfad = setup.mPath;
-region = setup.ndvi; %in future read this information from file
-cd(pfad)
-
-
+    
+    %% SETUP
+    tic
+    clear all
+    
+    warning off
+    
+    %Today's date
+    today=datenum(date);
+    
+    %load setup file
+    load('setup.mat')
+    
+    %bounding box
+    bblon = [setup.bBox(1) setup.bBox(3)];
+    bblat = [setup.bBox(2) setup.bBox(4)];
+    ndays = 4; %number of days for download of GDAS/GFS (Maximum = 6)-1
+    pfad = setup.mPath;
+    region = setup.ndvi; %in future read this information from file
+    cd(pfad)
+    
+    
     %% 1.Load NDVI
     cd('./data/raw/ndvi')
     if strcmp(setup.ndvi,'N/A')==0
@@ -51,19 +53,19 @@ cd(pfad)
         fn = {fn(end).name}';
         fn = cell2mat(fn);
         load(fn);
-
+        
         %convert to RGB to NDVI
         NDVI=single(NDVI)/250;
-
+        
         %resize
         [NDVI,R_NDVI] = resizem(NDVI,0.5,R_NDVI);
-
+        
         %convert to Kc
         Kc=1.4571*(NDVI)-0.1725; %  according to: Kamble, B., Irmak, A., & Hubbard, K. (2013). Estimating Crop Coefficients Using Remote Sensing-Based Vegetation Index. Remote Sensing, 5(4), 1588?1602. doi:10.3390/rs5041588
-
+        
         %set clouds and open water to 1
         Kc(Kc<=0)=1;
-
+        
         %clear variables
         clearvars fn NDVI
     end
@@ -72,7 +74,7 @@ cd(pfad)
     % load GDAS data
     cd('..')
     load(strcat(setup.T,'.mat'));
-            
+    
     % specify parameter
     param{2}.lapse=-0.5;
     
@@ -89,22 +91,22 @@ cd(pfad)
     else
         load('DEM_GDAS.mat')
     end
-           
+    
     %check if nearest neighbor for GDAS raster has already been calculated
     if exist(fullfile(cd, 'iEiC_GDAS.mat'), 'file')==0
-            [iE_GDAS, iC_GDAS] = findNeighbor(1500,R_T,DEM_GDAS);
-            save iEiC_GDAS.mat iE_GDAS iC_GDAS;
+        [iE_GDAS, iC_GDAS] = findNeighbor(1500,R_T,DEM_GDAS);
+        save iEiC_GDAS.mat iE_GDAS iC_GDAS;
     else
         load('iEiC_GDAS.mat');
     end
-                      
+    
     %Adjust Temperatures
     [T] = adjMeteodata(T, param, 2, DEM_GDAS, iC_GDAS, iE_GDAS); % adjust to elevation
     [maxT] = adjMeteodata(maxT, param, 2, DEM_GDAS, iC_GDAS, iE_GDAS); % adjust to elevation
     [minT] = adjMeteodata(minT, param, 2, DEM_GDAS, iC_GDAS, iE_GDAS); % adjust to elevation
     
     cd('..');
-
+    
     
     %% 3. Bias correct GDAS T
     
@@ -134,11 +136,11 @@ cd(pfad)
     end
     
     % Maximum temperature
-     if sum(~isnan(statData.WMO.MAX))>365
+    if sum(~isnan(statData.WMO.MAX))>365
         var2BC = {'MAX'};
         [minT,slopeTmin,ViTmin] = biasCorrection(minT, R_T, timeT', statData, var2BC, dataSource); % T is now bias corrected!
-     end
-        
+    end
+    
     %Extract maximum 20 days
     if size(T,3)>20
         timeT=timeT(end-19:end);
@@ -146,7 +148,7 @@ cd(pfad)
         minT=minT(:,:,end-19:end);
         T=T(:,:,end-19:end);
     end
-       
+    
     
     
     
@@ -167,8 +169,8 @@ cd(pfad)
         etGDAS(:,:,l)= imresize(etG(:,:,l),size(KcGDAS)).*KcGDAS;
     end
     R_ET=R_Kc;
-       
-   
+    
+    
     %save potential ET
     cd('../processed/temp')
     save(strcat(setup.T,'.mat'),'etGDAS', 'T','maxT','minT','R_ET','timeT', 'R_T')
@@ -189,33 +191,33 @@ cd(pfad)
     % If time series is longer than 365 days do bias correction
     % Mean temperature
     if sum(~isnan(statData.WMO.TEMP))>365
-        var2BC = {'TEMP'}; 
+        var2BC = {'TEMP'};
         [F,slopeFT,ViFT] = biasCorrection(F, F{1}.R_F, size(F,2), statData, var2BC, dataSource); % T is now bias corrected
     end
     
     % Precipitation
     if sum(~isnan(statData.WMO.PRCP))>365
-        var2BC = {'PRCP'}; 
+        var2BC = {'PRCP'};
         [F,slopeFP,ViFP] = biasCorrection(F, F{1}.R_F, size(F,2), statData, var2BC, dataSource); % T is now bias corrected!
     end
     
-     % Mean temperature
+    % Mean temperature
     if sum(~isnan(statData.WMO.MIN))>365
-        var2BC = {'MIN'}; 
+        var2BC = {'MIN'};
         [F,slopeFminT,ViTmin] = biasCorrection(F, F{1}.R_F, size(F,2), statData, var2BC, dataSource); % T is now bias corrected!
     end
     
-     % Mean temperature
+    % Mean temperature
     if sum(~isnan(statData.WMO.MAX))>365
-        var2BC = {'MAX'}; 
+        var2BC = {'MAX'};
         [F,slopeFmaxT,ViTmax] = biasCorrection(F, F{1}.R_F, size(F,2), statData, var2BC, dataSource); % T is now bias corrected!
     end
     
     %% 6.Compute potential ET from GFS temperatures
     
     if length(F)>5
-    %extract last day
-    F=F(end-4:end);
+        %extract last day
+        F=F(end-4:end);
     end
     
     %centered latitude grid coordinates vector
@@ -228,7 +230,7 @@ cd(pfad)
     for l=1:length(F)
         d{l}.FET = single(potET(F{l}.FT,F{l}.FmaxT,F{l}.FminT,latF,F{l}.timeF));
     end
-        
+    
     
     %multiply with Kc
     for m=1:length(F)
@@ -240,11 +242,11 @@ cd(pfad)
     end
     
     %adjust Georeference
-     for l=1:length(F)
+    for l=1:length(F)
         F{l}.R_FP=F{l}.R_F;
         F{l}=rmfield(F{l},'R_F');
         F{l}.R_FET=R_NDVI;
-     end
+    end
     
     %save potential ET
     cd('../processed/temp')
@@ -280,20 +282,20 @@ cd(pfad)
     
     %check if nearest neighbor for FEWS raster has already been calculated
     if exist(fullfile(cd, 'iEiC_FEWS.mat'), 'file')==0
-            [iE_FEWS, iC_FEWS] = findNeighbor(1500,R_P,DEM_FEWS);
-            save iEiC_FEWS.mat iE_FEWS iC_FEWS;
+        [iE_FEWS, iC_FEWS] = findNeighbor(1500,R_P,DEM_FEWS);
+        save iEiC_FEWS.mat iE_FEWS iC_FEWS;
     else
         load('iEiC_FEWS.mat');
     end
-   
+    
     % Adjust P to elevation
     % specify parameter
     param{1}.k1=0.4;
     param{1}.k2=0;
-    [P] = adjMeteodata(P, param, 1, DEM_FEWS, iC_FEWS, iE_FEWS); % adjust to elevation  
-
+    [P] = adjMeteodata(P, param, 1, DEM_FEWS, iC_FEWS, iE_FEWS); % adjust to elevation
+    
     cd('..')
-         
+    
     
     % Bias correct
     dataSource = setup.P;
@@ -303,7 +305,7 @@ cd(pfad)
         var2BC = {'PRCP'};
         [P,slopeP,ViP] = biasCorrection(P, R_P, timeP', statData, var2BC, dataSource); % T is now bias corrected!
     end
-   
+    
     
     %Extract maximum 20 days
     if size(P,3)>20
@@ -312,13 +314,13 @@ cd(pfad)
     end
     newTFEWS=timeP;
     
-     
+    
     % downscale P to subcatchments
     cd('../processed/sub')
     if exist(fullfile(cd, 'SI_P.mat'), 'file')==0
         
-       a_P = getSubIndex(SUB,P,R_P);
-       save SI_P.mat a_P
+        a_P = getSubIndex(SUB,P,R_P);
+        save SI_P.mat a_P
         
     else
         load('SI_P.mat')
@@ -332,10 +334,26 @@ cd(pfad)
         save sub_P.mat Psub timeP;
     else
         load('sub_P.mat')
+        
         if newTFEWS(end)~= timeP(end)
-           nNew=newTFEWS(end)-timeP(end); 
-           Psub(end+1:end+nNew,:)=new_P(end-nNew+1:end,:);
-           timeP(end+1:end+nNew)=newTFEWS(end-nNew+1:end);
+            nNew=newTFEWS(end)-timeP(end);
+        
+            % edit bea
+            nMiss = size(new_P,1) -nNew; % 
+            if nMiss < 1 % Number of days missed > number of days read.
+                nMiss = abs(nMiss);
+                % Fill the missed days with NaNs.
+                Psub(end+1:end+nMiss,:) = NaN .* new_P(1:nMiss,:);
+                timeP(end+1:end+nMiss) = newTFEWS(1:nMiss) - nMiss;
+                % Fill the rest with read data.
+                Psub(end+1:end+nNew-nMiss,:) = new_P(end-nNew+1+nMiss:end,:);
+                timeP(end+1:end+nNew-nMiss) = newTFEWS(end-nNew+1+nMiss:end);
+            else
+                Psub(end+1:end+nNew,:)=new_P(end-nNew+1:end,:);
+                timeP(end+1:end+nNew)=newTFEWS(end-nNew+1:end);
+            end
+            % /edit bea
+        
         end
         save sub_P.mat Psub timeP;
     end
@@ -349,7 +367,7 @@ cd(pfad)
     load(strcat(setup.T,'.mat'))
     cd('../sub')
     
-         
+    
     %update date
     newTGDAS=timeT;
     
@@ -372,13 +390,27 @@ cd(pfad)
     else
         load('sub_pET.mat')
         if newTGDAS(end)~= timeT(end)
-           nNew=newTGDAS(end)-timeT(end); 
-           pETsub(end+1:end+nNew,:)=new_pET(end-nNew+1:end,:);
-           timeT(end+1:end+nNew)=newTGDAS(end-nNew+1:end);
+           nNew=newTGDAS(end)-timeT(end);
+            
+           % edit bea
+           nMiss = size(new_pET,1) -nNew; % 
+           if nMiss < 1 % Number of days missed > number of days read.
+             nMiss = abs(nMiss);
+             % Fill the missed days with NaNs.
+             pETsub(end+1:end+nMiss,:) = NaN .* new_pET(1:nMiss,:);
+             timeT(end+1:end+nMiss) = newTGDAS(1:nMiss) - nMiss;
+             % Fill the rest with read data.
+             pETsub(end+1:end+nNew-nMiss,:) = new_pET(end-nNew+1+nMiss:end,:);
+             timeT(end+1:end+nNew-nMiss) = newTGDAS(end-nNew+1+nMiss:end);
+           else
+             pETsub(end+1:end+nNew,:)=new_pET(end-nNew+1:end,:);
+             timeT(end+1:end+nNew)=newTGDAS(end-nNew+1:end);
+           end
+           % /edit bea
         end
         save sub_pET.mat pETsub timeT;
     end
-   
+    
     
     % Temperatures
     if exist(fullfile(cd,'SI_T.mat'), 'file')==0
@@ -409,30 +441,48 @@ cd(pfad)
         load('sub_minT.mat')
         
         if newTGDAS(end)~= timeT(end)
-           nNew=newTGDAS(end)-timeT(end); 
-           sub_T(end+1:end+nNew,:)=new_T(end-nNew+1:end,:);
-           sub_maxT(end+1:end+nNew,:)=new_maxT(end-nNew+1:end,:);
-           sub_minT(end+1:end+nNew,:)=new_minT(end-nNew+1:end,:);
-           timeT(end+1:end+nNew)=newTGDAS(end-nNew+1:end);
+            nNew=newTGDAS(end)-timeT(end);
+            
+            % edit bea
+            nMiss = size(new_pET,1) - nNew;
+           if nMiss < 1 % Number of days missed > number of days read.
+             nMiss = abs(nMiss);
+             % Fill the missed days with NaNs.
+             sub_T(end+1:end+nMiss,:) = NaN .* new_T(1:nMiss,:);
+             sub_maxT(end+1:end+nMiss,:) = NaN .* new_maxT(1:nMiss,:);
+             sub_minT(end+1:end+nMiss,:) = NaN .* new_minT(1:nMiss,:);
+             timeT(end+1:end+nMiss) = newTGDAS(1:nMiss) - nMiss;
+             % Fill the rest with read data.
+             sub_T(end+1:end+nNew-nMiss,:) = new_T(end-nNew+1+nMiss:end,:);
+             sub_maxT(end+1:end+nNew-nMiss,:) = new_maxT(end-nNew+1+nMiss:end,:);
+             sub_minT(end+1:end+nNew-nMiss,:) = new_minT(end-nNew+1+nMiss:end,:);
+             timeT(end+1:end+nNew-nMiss) = newTGDAS(end-nNew+1+nMiss:end);
+           else
+             sub_T(end+1:end+nNew,:)=new_T(end-nNew+1:end,:);
+             sub_maxT(end+1:end+nNew,:)=new_maxT(end-nNew+1:end,:);
+             sub_minT(end+1:end+nNew,:)=new_minT(end-nNew+1:end,:);
+             timeT(end+1:end+nNew)=newTGDAS(end-nNew+1:end);
+           end
+            % /edit bea
         end
         save sub_T.mat sub_T timeT;
         save sub_maxT.mat sub_maxT timeT;
         save sub_minT.mat sub_minT timeT;
     end
     
-   
+    
     clearvars sub_T sub_maxT sub_minT timeT R_T R_ET T a_T_GDAS a_pET_GDAS etGDAS m maxT minT newTGDAS new_T new_maxT new_minT new_pET sub_pET
     
-   %% Downscale GFS to Subcatchments 
-  
-  
-   % load GFS
+    %% Downscale GFS to Subcatchments
+    
+    
+    % load GFS
     cd('../temp')
     load(strcat(setup.F,'.mat'))
     cd('../sub')
     
-         
-      
+    
+    
     % Temperatures and precipitation
     % Downscale new values
     if exist(fullfile(cd,'SI_P_F.mat'), 'file')==0
@@ -444,15 +494,16 @@ cd(pfad)
         load('SI_P_F.mat')
     end
     for l=1:length(F)
-        new{l}.FP = getSubValues(a_P_F,SUB,F{l}.FP,F{l}.R_FP); 
+        new{l}.FP = getSubValues(a_P_F,SUB,F{l}.FP,F{l}.R_FP);
         new{l}.FT = getSubValues(a_P_F,SUB,F{l}.FT,F{l}.R_FP);
-        new{l}.FmaxT = getSubValues(a_P_F,SUB,F{l}.FmaxT,F{l}.R_FP); 
+        new{l}.FmaxT = getSubValues(a_P_F,SUB,F{l}.FmaxT,F{l}.R_FP);
         new{l}.FminT = getSubValues(a_P_F,SUB,F{l}.FminT,F{l}.R_FP);
         new{l}.timeF = F{l}.timeF;
     end
     % Update File
-    if exist(fullfile(cd,'sub_FT.mat'), 'file')==0
-        for l=1:length(new)
+    if exist(fullfile(cd,'sub_FT.mat'), 'file') == 0
+        
+        for l = 1 : length(new)
             FTsub{l}.FT=new{l}.FT;
             FTsub{l}.FmaxT=new{l}.FmaxT;
             FTsub{l}.FminT=new{l}.FminT;
@@ -462,33 +513,84 @@ cd(pfad)
         end
         save sub_FP.mat FPsub;
         save sub_FT.mat FTsub;
-       
+        
     else
+        
         load('sub_FP.mat')
-        nNewFP=new{end}.timeF(1)-FPsub{end}.timeF(1);
-        c=length(FPsub)+1;
-            for m=length(new)-nNewFP+1:length(new)
-                FPsub{c}.FP=new{m}.FP;
-                FPsub{c}.timeF=new{m}.timeF;
-                c=c+1;
+        
+        % tobi edit
+        nNewFP = new{end}.timeF(1) - FPsub{end}.timeF(1);
+        c = length(FPsub) + 1;
+        
+        nMiss = length(new) - nNewFP;
+        
+        if  nMiss < 1 % NaN tagging since model was screwed over more than 5 days
+            
+            for idx = 1 : abs(nMiss)
+                
+                FPsub{c}.FP = NaN * FPsub{c-1}.FP;
+                FPsub{c}.timeF = FPsub{c-1}.timeF + 1;
+                c = c + 1;
+                
             end
-        load('sub_FT.mat')    
-        nNewFT=new{end}.timeF(1)-FTsub{end}.timeF(1);
-        c=length(FTsub)+1;
-            for m=length(new)-nNewFT+1:length(new)
-                FTsub{c}.FT=new{m}.FT;
-                FTsub{c}.FmaxT=new{m}.FmaxT;
-                FTsub{c}.FminT=new{m}.FminT;
-                FTsub{c}.timeF=new{m}.timeF;
-                c=c+1;
+            
+        end
+        % end tobi edit
+        
+        nNewFP = new{end}.timeF(1) - FPsub{end}.timeF(1);
+        nMiss = length(new) - nNewFP + 1;
+        c = length(FPsub) + 1;
+        
+        for m = nMiss : length(new)
+            
+            FPsub{c}.FP = new{m}.FP;
+            FPsub{c}.timeF = new{m}.timeF;
+            c = c + 1;
+            
+        end
+        
+        load('sub_FT.mat')
+        
+        % tobi edit
+        nNewFT = new{end}.timeF(1) - FTsub{end}.timeF(1);
+        c = length(FTsub) + 1;
+        
+        nMiss = length(new) - nNewFT;
+        
+        if  nMiss < 1 % NaN tagging since model was screwed over more than 5 days
+            
+            for idx = 1 : abs(nMiss)
+                
+                FTsub{c}.FT = NaN * FTsub{c-1}.FT;
+                FTsub{c}.timeF = FTsub{c-1}.timeF + 1;
+                c = c + 1;
+                
             end
+            
+        end
+        % end tobi edit
+        
+        nNewFT = new{end}.timeF(1) - FTsub{end}.timeF(1);
+        nMiss = length(new) - nNewFT + 1;
+        c = length(FTsub) + 1;
+        
+        for m = nMiss : length(new)
+            
+            FTsub{c}.FT = new{m}.FT;
+            FTsub{c}.FmaxT = new{m}.FmaxT;
+            FTsub{c}.FminT = new{m}.FminT;
+            FTsub{c}.timeF = new{m}.timeF;
+            c = c + 1;
+            
+        end
+        
         save sub_FP.mat FPsub;
         save sub_FT.mat FTsub;
-       
+        
     end
     
-       
-        
+    
+    
     % Potential Evapotranspiration
     % Downscale new values
     if exist(fullfile(cd,'SI_pET_F.mat'), 'file')==0
@@ -504,30 +606,72 @@ cd(pfad)
     end
     % Update File
     if exist(fullfile(cd,'sub_FpET.mat'), 'file')==0
+        
         for l=1:length(new)
             FpETsub{l}.FpET=new{l}.FpET;
             FpETsub{l}.timeF=new{l}.timeF;
         end
+        
         save sub_FpET.mat FpETsub;
+        
     else
+        
         load('sub_FpET.mat')
-        nNewFpET=new{end}.timeF(1)-FpETsub{end}.timeF(1);
-        c=length(FpETsub)+1;
-            for m=length(new)-nNewFpET+1:length(new)
-                FpETsub{c}.FpET=new{m}.FpET;
-                FpETsub{c}.timeF=new{m}.timeF;
-                c=c+1;
+        
+        % tobi edit
+        nNewFpET = new{end}.timeF(1) - FpETsub{end}.timeF(1);
+        c = length(FpETsub) + 1;
+        
+        nMiss = length(new) - nNewFpET;
+        
+        if  nMiss < 1 % NaN tagging since model was screwed over more than 5 days
+            
+            for idx = 1 : abs(nMiss)
+                
+                FpETsub{c}.FpET = NaN * FpETsub{c-1}.FpET;
+                FpETsub{c}.timeF = FpETsub{c-1}.timeF + 1;
+                c = c + 1;
+                
             end
-         save sub_FpET.mat FpETsub;   
+            
+        end
+        % end tobi edit
+        
+        nNewFpET=new{end}.timeF(1)-FpETsub{end}.timeF(1);
+        nMiss = length(new) - nNewFpET + 1;
+        c=length(FpETsub)+1;
+        
+        for m = nMiss :length(new)
+            
+            FpETsub{c}.FpET=new{m}.FpET;
+            FpETsub{c}.timeF=new{m}.timeF;
+            c=c+1;
+            
+        end
+        
+        save sub_FpET.mat FpETsub;
+        
     end
     
-    
-    %%
-%     disp(datestr(today))
+    disp('---')
+    disp([datestr(today) ': processRaw_Themi successfully finished!'])
+    disp('---')
     clearvars today
     toc
- catch
-     disp('Error occured, next try in 3 hours')
+    %exit(0)
+catch ME
+    
+    disp('---')
+    disp('time')
+    nowT = datevec(now);
+    nowT = nowT(1:5)
+    disp('---')
+    disp('Error occured in processRaw_Themi.m! ERROR SPECIFICS:')
+    rethrow(ME)
+    disp('---')
+    disp('Next try in 3 hours!')
+    disp('---')
+    %exit(1)
 end
 
 
