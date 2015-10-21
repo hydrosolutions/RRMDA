@@ -7,6 +7,10 @@ ehthumbs.db
 *.stdout
 *.m~
 *.diff
+RESTART*
+
+# Ignore compiled code
+*.pyc
 
 # Folder config file
 Desktop.ini
@@ -22,6 +26,7 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
 
 # =========================
 # Operating System Files
@@ -48,7 +53,6 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
-
 # Dropbox
 .dropbox
 
@@ -56,6 +60,8 @@ Temporary Items
 app/Themi/data/
 app/Themi/resources/
 app/Themi/results/
+app/Themi/src/model/input
+app/Themi/src/model/output
 app/Themi_example/
 testing/Vakhsh_data/
 testing/waterStress/
