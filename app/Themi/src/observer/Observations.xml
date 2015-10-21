@@ -1,37 +1,20 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<noosObserver xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<?xml version="1.0" ?><noosObserver xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
-  <timeSeries id="Q1" status="use" standardDeviation="0.05">
-		736239DLoad.csv
-	</timeSeries>
+  <timeSeries id="Q1" standardDeviation="0.05" status="use">736256DLoad.csv</timeSeries>
   
-  <timeSeries id="Q2" status="use" standardDeviation="0.05">
-    736239DLoad.csv
-  </timeSeries>
+  <timeSeries id="Q2" standardDeviation="0.05" status="use">736256DLoad.csv</timeSeries>
 
-  <timeSeries id="Q3" status="use" standardDeviation="0.05">
-		736239DLoad.csv
-  </timeSeries>
+  <timeSeries id="Q3" standardDeviation="0.05" status="use">736256DLoad.csv</timeSeries>
 
-  <timeSeries id="Q4" status="use" standardDeviation="0.05">
-    736239DLoad.csv
-  </timeSeries>
+  <timeSeries id="Q4" standardDeviation="0.05" status="use">736256DLoad.csv</timeSeries>
 
-  <timeSeries id="Q5" status="use" standardDeviation="0.05">
-		736239DLoad.csv
-  </timeSeries>
+  <timeSeries id="Q5" standardDeviation="0.05" status="use">736256DLoad.csv</timeSeries>
 
-  <timeSeries id="Q6" status="use" standardDeviation="0.05">
-    736239DLoad.csv
-  </timeSeries>
+  <timeSeries id="Q6" standardDeviation="0.05" status="use">736256DLoad.csv</timeSeries>
 
-  <timeSeries id="Q7" status="use" standardDeviation="0.05">
-		736239DLoad.csv
-  </timeSeries>
+  <timeSeries id="Q7" standardDeviation="0.05" status="use">736256DLoad.csv</timeSeries>
 
-  <timeSeries id="Q8" status="use" standardDeviation="0.05">
-    736239DLoad.csv
-  </timeSeries>
+  <timeSeries id="Q8" standardDeviation="0.05" status="use">736256DLoad.csv</timeSeries>
 
 
 </noosObserver>
