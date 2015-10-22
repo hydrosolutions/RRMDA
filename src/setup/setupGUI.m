@@ -345,6 +345,7 @@ copyfile('sendtoDB.m',strcat(setup.mPath,'/src/sendtoDB_',handles.data.modelName
 copyfile('MatlabMail.m',strcat(setup.mPath,'/src/MatlabMail_',handles.data.modelName,'.m'))
 copyfile('controlData.m',strcat(setup.mPath,'/src/controlData_',handles.data.modelName,'.m'))
 copyfile('matlab_oda_batcher_offline.py',strcat(setup.mPath,'/src/matlab_oda_batcher_offline.py'))
+copyfile('cleanUpOpenDaRun.m',strcat(setup.mPath,'/src/cleanUpOpenDaRun_',handles.data.modelName,'.m'));
 
 % COPY ENKF PARAMETER FILES
 cd(setup.mPath)

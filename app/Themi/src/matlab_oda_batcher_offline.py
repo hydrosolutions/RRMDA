@@ -41,7 +41,7 @@ logger = None
 
 
 # Local methods.
-def setupOpenDArun(homeDirectory,modelName):
+def setupOpenDaRun(homeDirectory,modelName):
   '''
   Setup call to openDA.
   
@@ -409,7 +409,7 @@ def main():
   # Copy observation file to model/observation/
   # Write RRMDA.oda
   # Write observation.xml
-  ret = setupOpenDArun(homeDir,modelName)
+  ret = setupOpenDaRun(homeDir,modelName)
 
   '''
   ## Call openDA.
@@ -429,6 +429,27 @@ def main():
   if (ret == 1):
     logger.warning('Call to %s failed. Continues anyway.', command)
   '''
+  
+  ## Clean up openDA run.
+  # Call matlab function that concatenates the model/output/workX/ files to
+  # re-create a complete input file.
+  numberOfTrials = 1
+  commandLine = matlabPathCommand+" && "+"/Applications/MATLAB_R2015a.app/bin/matlab -nodisplay -nosplash -r \"cleanUpOpenDaRun\"".format(os.path.realpath(os.path.dirname(__file__)),output_dir)
+  command = "cleanUpOpenDaRun"
+  currentDateTime = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+  logger.info('Calling matlab with %s at %s . . . ',command, currentDateTime)
+  ret = 2
+  try:
+    ret = systemCall(commandLine, numberOfTrials, output_dir, out_buffer, out_path, recipients, command)
+    if (ret == 0):
+      logger.info('. . . done.')
+  except (KeyboardInterrupt, SystemExit):
+    sys.exit("Keyboard interrupt. Exiting.")
+  if (ret==1):
+    logger.warning('Call to %s failed. Continue anyway.',command)
+  if (ret==2):
+    logger.debug('ret=2')
+  
 
   '''
   ## Call runModel.m
