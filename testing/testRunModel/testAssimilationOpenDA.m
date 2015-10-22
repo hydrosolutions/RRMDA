@@ -1,4 +1,4 @@
-function [out,message] = testAssimilation()
+function [out,message] = testAssimilationOpenDA()
 %% function [out,message] = testAssimilation()
 %
 % Tests the function assimilation.m in a test environment separate from
@@ -24,7 +24,7 @@ try
   current_dir = strjoin(mfilepathcell(1:end-1),filesep); % Remove file name.
   
   try
-    fid = fopen(strcat(current_dir,filesep,'testAssimilation.log'),'w+');
+    fid = fopen(strcat(current_dir,filesep,'testAssimilationOpenDA.log'),'w+');
     doublefprintf(fid,'-----\n');
     c = clock;
     doublefprintf(fid,'START testAssimilation() %2d.%2d %4d, %2d:%2d\n',c(3),c(2),c(1),c(4),c(5));
@@ -72,7 +72,8 @@ try
          'TestThemi',filesep,'results',filesep,'nowcast'],'dir') == 7
     mkdir([current_dir,filesep,'testEnvironment',filesep,'app',filesep,...
            'TestThemi',filesep,'results',filesep,'nowcast']);
-  end     
+  end 
+  
   % Add paths of test environment to MATLABPATH.
   addpath(genpath([sPath,filesep,'src']));
   addpath(genpath(setup.mPath));
@@ -91,13 +92,13 @@ end
 %% Call assimilation.
 doublefprintf(fid,'Calling assimilation.m . . . ');
 try
-  assimilation(paths);
+  assimilationOpenDA(paths);
   doublefprintf(fid,'. . . done.\n')
 catch e
-  message = [message,sprintf('Problem in call to assimilation(). Error message: %s. Returning.\n',e.message)];
+  message = [message,sprintf('Problem in call to assimilationOpenDA(). Error message: %s. Returning.\n',e.message)];
   doublefprintf(fid,'Problem: %s.\n',e.message);
-  out = 0;
   dbstack
+  out = 0;
   cd(current_dir);
   return
 end

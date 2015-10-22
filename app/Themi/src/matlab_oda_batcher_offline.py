@@ -362,7 +362,7 @@ def main():
   matlabPathCommand = "export MATLABPATH="+addMatlabPath+"$MATLABPATH"
   logger.debug('MatlabPath: %s',matlabPathCommand)
 
-  '''
+
   ## Call getRaw.m
   # Set up command.
   numberOfTrials = 2
@@ -386,6 +386,7 @@ def main():
     #sys.exit("Call to getRaw_Themi.m failed. Exiting.")
     logger.warning('Call to failed. Continue anyway.',command)
 
+
   ## Call processRaw.m
   numberOfTrials = 1
   commandLine = matlabPathCommand+" && "+"/Applications/MATLAB_R2015a.app/bin/matlab -nodisplay -nosplash -r \"processRaw_Themi\"".format(os.path.realpath(os.path.dirname(__file__)),output_dir)
@@ -402,7 +403,7 @@ def main():
   if (ret==1):
     #sys.exit("Call to processRaw_Themi.m fialed. Exiting.")
     logger.warning('Call to %s failed. Continue anyway.',command)
-  '''
+  
 
   ## Setup call to openDA.
   # Copy input files to model/input/
@@ -411,9 +412,8 @@ def main():
   # Write observation.xml
   ret = setupOpenDaRun(homeDir,modelName)
 
-  '''
   ## Call openDA.
-  # openDA needs to be propperly installed!
+  # openDA needs to be propperly installed! OpenDA calls matlab with runModelOpenDA_Themi.m
   numberOfTrials = 1
   commandLine = "oda_run.sh RRMDA_Themi.oda"
   command = "RRMDA_Themi.oda"
@@ -428,7 +428,7 @@ def main():
 
   if (ret == 1):
     logger.warning('Call to %s failed. Continues anyway.', command)
-  '''
+  
   
   ## Clean up openDA run.
   # Call matlab function that concatenates the model/output/workX/ files to

@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
 #
 # matlab_oda_batcher.py is a wrapper for matlab functions and openDA that can be
 # started with a launch daemon on mac machines.
@@ -16,8 +17,6 @@ import logging     # Allows in-line logging with different levels.
 import sys
 import smtplib     # Sending e-mails via smtp.
 from email.mime.text import MIMEText  # e-mail modules for message preparation.
-# matlab.engine has trouble starting when user inactive. Use system commands instead.
-# import matlab.engine  # Calling matlab from python.
 import subprocess  # Allows system commands.
 import time        # Time references.
 import os          # OS commands.
@@ -25,8 +24,11 @@ import glob        # File name pattern matching.
 import tempfile    # Temporary files.
 import shlex
 from datetime import datetime  # To print current time.
-import shutil
-
+import shutil      # Hihg level file operations, e.g. copy file from source to destination.
+import xml.dom.minidom  # Parsing of entire xml files in memory.
+# Append local python modules to the path.
+sys.path.append(os.path.realpath(os.path.join(os.path.dirname(__file__),'..','..','..','src','python_modules')))
+import jdutil
 
 # Global fields, yahoo settings.
 SMTP_SERVER = "smtp.mail.yahoo.com"
@@ -35,8 +37,118 @@ SMTP_SENDER = str('imomowb@yahoo.com')
 SMTP_USERNAME = str('imomowb@yahoo.com')
 SMTP_PASSWORD = str('iMoMo567')
 
+logger = None
+
 
 # Local methods.
+def setupOpenDaRun(homeDirectory,modelName):
+  '''
+  Setup call to openDA.
+  
+  Cleaning up input directory
+  Copy input files to model/input/
+  Copy observation file to model/observation/
+  Write RRMDA.oda
+  Write observation.xml
+  
+  returns 0 upon success, 1 uppon failure.
+  '''
+  
+  logger.info('Setting up openDA run.')
+  inputDir = os.path.join(homeDirectory,'app',modelName,'src','model','input')
+  
+  ## Cleaning up: Removing all (old) files in inputDir.
+  files = [f for f in os.listdir(inputDir)]
+  for f in files:
+    try:
+      filePath = os.path.join(inputDir,f)
+      os.remove(filePath)
+      logger.info('Cleaning up input directory.')
+    except Exception, e:
+      logger.error('Problem removing file %s e: %s',f,e)
+      return 1
+  
+  ## Copy input files from resources/restart
+  restartPath = os.path.join(homeDirectory,'app',modelName,'resources','restart')
+  try:
+    shutil.copy(os.path.join(restartPath,'E.mat'),inputDir)
+    shutil.copy(os.path.join(restartPath,'S0G0.mat'),inputDir)
+    logger.info('Copying restart files.')
+  except Exception, e:
+    logger.error('Problem copying restart files. Error: %s.',e)
+    return 1
+
+  ## Copy most recent observation file to model/observation/
+  # Get the list of files in the source directory.
+  observation_path = os.path.join(homeDirectory,'app',modelName,'data','raw','imomo')
+  # In case there are characters in the path that need to be escaped put quotes around the path.
+  observation_path = observation_path + '/'
+  logger.debug('setupOpenDArun : observation_path = %s' , observation_path)
+  try:
+    files = [f for f in os.listdir(observation_path)]
+    # Get the extension of the last (= most recent) file in the list.
+    index = -1
+    filename, file_extension = os.path.splitext(files[index])
+    while not (file_extension == '.csv'):
+      index = index - 1
+      filename, file_extension = os.path.splitext(files[index])
+    # Copy this file to homeDirectory/app/modelName/src/model/input/
+    try:
+      shutil.copy(os.path.join(observation_path,(filename+file_extension)),inputDir)
+      logger.info('Copying file %s to directory %s.', os.path.join(observation_path,(filename+file_extension)),inputDir)
+    except IOError as ioe:
+      logger.error('IOError %d: %s.', ioe.errno, ioe.strerror)
+      return 1
+  except OSError as ose:
+    logger.error('OSError %d: %s.', ose.errno, ose.strerror)
+    return 1
+
+  ## Write RRMDA.oda
+  try:
+    DOMTree = xml.dom.minidom.parse("RRMDA.oda")
+    openDaApplication = DOMTree.documentElement
+    restartInFile = openDaApplication.getElementsByTagName("restartInFile")
+    restartInFileName = restartInFile[0].childNodes[0].nodeValue
+    restartOutFile = openDaApplication.getElementsByTagName("restartOutFilePrefix")
+    restartOutFilePrefix = restartOutFile[0].childNodes[0].nodeValue
+    logger.info('Parsing RRMDA.oda')
+    logger.debug('restartOutFilePrefix = %s',restartOutFilePrefix)
+    # Change fileName
+    date = jdutil.date_to_jd(int(datetime.now().strftime('%Y')),
+                             int(datetime.now().strftime('%m')),
+                             float(datetime.now().strftime('%d')))
+    date = jdutil.jd_to_mjd(date)
+    # Convert to matlab datenum
+    date = date + 678942
+    datenum = "%d" % date
+    logger.debug('datenum of today = %d', date)
+    restartInFileName = restartOutFilePrefix + datenum + '.zip'
+    logger.debug('new restartInFileName = %s',restartInFileName)
+    restartInFile[0].childNodes[0].replaceWholeText(restartInFileName)
+    file = open('RRMDA.oda','w')
+    DOMTree.writexml(file)
+    file.close()
+  except Exception, e:
+    logger.error('Problem parsing and writing RRMDA.oda. Error: %s.',e)
+    return 1
+
+  # Write Observations.xml
+  try:
+    DOMTree = xml.dom.minidom.parse("observer/Observations.xml")
+    observer = DOMTree.documentElement
+    timeSeries = observer.getElementsByTagName("timeSeries")
+    logger.info('Parsing Observations.xml')
+    for node in timeSeries:
+      node.childNodes[0].replaceWholeText(datenum + 'DLoad.csv')
+    file = open('observer/Observations.xml','w')
+    DOMTree.writexml(file)
+    file.close()
+  except Exception, e:
+    logger.error('Problem parsing and writing Observations.xml. Error: %s.',e)
+    return 1
+
+  return 0
+
 def systemCall(args, numberOfTrials, output_dir, out_buffer, out_path, recipients, command):
   '''
   Call to system
@@ -116,7 +228,7 @@ def testType(variable,expected_type):
   @param expected_type Python type.
   """
   if (type(variable) == expected_type) == False:
-    logger.error("Error: Type missmatch. Found type(%s)=%s but expected %s" eval(variable),type(variable),expected_type)
+    logger.error('Error: Type missmatch. Found type(%s)=%s but expected %s' ,eval(variable),type(variable),expected_type)
     exit()
 
 
@@ -187,6 +299,8 @@ def main():
     - wrapping up
   System calls that are commented out in the offline version are in brackets.
   """
+  global logger
+  
   ## Specify e-mail recipients and model name.
   # Set up e-mail.
   recipients = [str('marti@hydrosolutions.ch')] # Comma-separate multiple recipients.
@@ -227,6 +341,13 @@ def main():
   # The matlab user path needs to be adapted.
   homeDir = os.path.realpath(os.path.join(os.path.dirname(__file__),'..','..','..'))
   logger.debug('homeDir: %s',homeDir)
+  
+  # Test if modelName describes a directory name.
+  if not os.path.isdir(os.path.join(homeDir,'app',modelName)):
+    logger.error('Error: %s is not a directory.',os.path.join(homeDir,'app',modelName))
+    print('Error: %s is not a directory.'%os.path.join(homeDir,'app',modelName))
+    sys.exit()
+  
   addMatlabPath = os.path.join(homeDir,'app',modelName,'src') + ":" + \
                   os.path.join(homeDir,'src') + ":" + \
                   os.path.join(homeDir,'src','data') + ":" + \
@@ -240,6 +361,7 @@ def main():
   addMatlabPath = "\"" + addMatlabPath + "\""
   matlabPathCommand = "export MATLABPATH="+addMatlabPath+"$MATLABPATH"
   logger.debug('MatlabPath: %s',matlabPathCommand)
+
 
   ## Call getRaw.m
   # Set up command.
@@ -264,6 +386,7 @@ def main():
     #sys.exit("Call to getRaw_Themi.m failed. Exiting.")
     logger.warning('Call to failed. Continue anyway.',command)
 
+
   ## Call processRaw.m
   numberOfTrials = 1
   commandLine = matlabPathCommand+" && "+"/Applications/MATLAB_R2015a.app/bin/matlab -nodisplay -nosplash -r \"processRaw_Themi\"".format(os.path.realpath(os.path.dirname(__file__)),output_dir)
@@ -280,9 +403,17 @@ def main():
   if (ret==1):
     #sys.exit("Call to processRaw_Themi.m fialed. Exiting.")
     logger.warning('Call to %s failed. Continue anyway.',command)
+  
+
+  ## Setup call to openDA.
+  # Copy input files to model/input/
+  # Copy observation file to model/observation/
+  # Write RRMDA.oda
+  # Write observation.xml
+  ret = setupOpenDaRun(homeDir,modelName)
 
   ## Call openDA.
-  # openDA needs to be propperly installed!
+  # openDA needs to be propperly installed! OpenDA calls matlab with runModelOpenDA_Themi.m
   numberOfTrials = 1
   commandLine = "oda_run.sh RRMDA_Themi.oda"
   command = "RRMDA_Themi.oda"
@@ -297,7 +428,28 @@ def main():
 
   if (ret == 1):
     logger.warning('Call to %s failed. Continues anyway.', command)
-
+  
+  
+  ## Clean up openDA run.
+  # Call matlab function that concatenates the model/output/workX/ files to
+  # re-create a complete input file.
+  numberOfTrials = 1
+  commandLine = matlabPathCommand+" && "+"/Applications/MATLAB_R2015a.app/bin/matlab -nodisplay -nosplash -r \"cleanUpOpenDaRun\"".format(os.path.realpath(os.path.dirname(__file__)),output_dir)
+  command = "cleanUpOpenDaRun"
+  currentDateTime = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+  logger.info('Calling matlab with %s at %s . . . ',command, currentDateTime)
+  ret = 2
+  try:
+    ret = systemCall(commandLine, numberOfTrials, output_dir, out_buffer, out_path, recipients, command)
+    if (ret == 0):
+      logger.info('. . . done.')
+  except (KeyboardInterrupt, SystemExit):
+    sys.exit("Keyboard interrupt. Exiting.")
+  if (ret==1):
+    logger.warning('Call to %s failed. Continue anyway.',command)
+  if (ret==2):
+    logger.debug('ret=2')
+  
 
   '''
   ## Call runModel.m
@@ -379,9 +531,10 @@ def main():
   ## Wrapping up.
   if (ret == 0):
     currentDateTime = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    logger.info('Done at %s. Sending success mail.',currentDateTime)
     message = 'Successfully ran on-line model.'
     sendEmail(recipients,subject,message)
+    logger.info('Done at %s. Success mail sent.',currentDateTime)
+  
 
   '''
   elif (ret==1):
