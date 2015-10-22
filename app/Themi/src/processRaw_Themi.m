@@ -338,7 +338,7 @@ try
         if newTFEWS(end)~= timeP(end)
             nNew=newTFEWS(end)-timeP(end);
         
-            % edit bea
+            % edit bea : fill in missing data with nans.
             nMiss = size(new_P,1) -nNew; % 
             if nMiss < 1 % Number of days missed > number of days read.
                 nMiss = abs(nMiss);
