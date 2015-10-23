@@ -18,10 +18,10 @@
         <!-- define actions relative to working dir. -->
         <computeActions>
             <action macExe="%binDir%/matlab_batcher.sh" workingDirectory="%instanceDir%" >
-            	<arg>"/Users/beamarti/Documents/openDA/rrm/model/bin/"</arg>
-                <arg>"rainfallRunoffModel"</arg>
+            	<arg>"same_as_script"</arg>
+                <arg>"runModelOpenDA_Themi"</arg>
                 <checkReturnStatus expect="0"/>
-            	<checkOutput file="%outputFile%"/> <!--determinitsicBudykoModelReturnValue.txt" expect="1"/>-->
+            	<checkOutput file="%EmatFile%"/> <!--determinitsicBudykoModelReturnValue.txt" expect="1"/>-->
             </action>
             	<!-- The return message of the blackbox model is stored in the deterministicBudykoModelReturnMessage.txt -->
         </computeActions>
@@ -40,7 +40,7 @@
     <inputOutput>
         
         <!-- read states and parameter file -->
-        <ioObject className="org.openda.model_RainfallRunoffZhang.Erapper">
+        <ioObject className="org.openda.model_RRMDA_Themi.Ewrapper">
             <file>%EmatFile%</file>
             <id>Emat</id>
             <arg>%instanceDir%%instanceNumber%</arg>
@@ -48,7 +48,7 @@
         
         <!-- Read time specs -->
         <!-- -->
-         <ioObject className="org.openda.model_RainfallRunoffZhang.TimesWrapper">
+         <ioObject className="org.openda.model_RRMDA_Themi.TimesWrapper">
         	<file>%inputFileTimes%</file>
         	<id>timeConfig</id>
         	<arg>%instanceDir%%instanceNumber%</arg>

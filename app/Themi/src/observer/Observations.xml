@@ -1,4 +1,5 @@
-<?xml version="1.0" ?><noosObserver xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<?xml version="1.0" ?>
+<noosObserver xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
   <timeSeries id="Q1" standardDeviation="0.05" status="use">736256DLoad.csv</timeSeries>
   
