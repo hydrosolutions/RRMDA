@@ -26,7 +26,8 @@ import shlex
 from datetime import datetime  # To print current time.
 import shutil      # Hihg level file operations, e.g. copy file from source to destination.
 import xml.dom.minidom  # Parsing of entire xml files in memory.
-# Append local python modules to the path.
+import re
+# Append custom python modules to the path.
 sys.path.append(os.path.realpath(os.path.join(os.path.dirname(__file__),'..','..','..','src','python_modules')))
 import jdutil
 
@@ -41,6 +42,36 @@ logger = None
 
 
 # Local methods.
+def observationsAvailable(homeDirectory,modelName):
+  '''
+  Check if observations are available for the current time step.
+    
+  - Figure out todays date in matlab datenum format to get the filename
+  - If there is a file with todays measurements read it in and figure out if
+  there is discharge data available.
+  
+  If there are discharge observations available return true, else return false.
+  '''
+  date = jdutil.date_to_jd(int(datetime.now().strftime('%Y')),
+                           int(datetime.now().strftime('%m')),
+                           float(datetime.now().strftime('%d')))
+  date = jdutil.jd_to_mjd(date)
+  # Convert to matlab datenum
+  date = date + 678942
+  datenum = "%d" % date
+  obsDir = os.path.join(homeDirectory,'app',modelName,'data','raw','imomo')
+  filename = os.path.join(obsDir,(datenum+'DLoad.csv'))
+  if os.path.exists(filename):
+    # Scan line by line until the second entry (variable ID) of a line matches 25
+    # (discharge).
+    for line in open(filename):
+      if re.search('^\d+\.*\d*,25,.+',line):
+        return True
+    return False  # No match while reading the lines.
+  else:  # Return False if there is no new data.
+    return False
+
+
 def setupOpenDaRun(homeDirectory,modelName):
   '''
   Setup call to openDA.
@@ -404,75 +435,76 @@ def main():
     #sys.exit("Call to processRaw_Themi.m fialed. Exiting.")
     logger.warning('Call to %s failed. Continue anyway.',command)
   
-
-  ## Setup call to openDA.
-  # Copy input files to model/input/
-  # Copy observation file to model/observation/
-  # Write RRMDA.oda
-  # Write observation.xml
-  ret = setupOpenDaRun(homeDir,modelName)
-
-  ## Call openDA.
-  # openDA needs to be propperly installed! OpenDA calls matlab with runModelOpenDA_Themi.m
-  numberOfTrials = 1
-  commandLine = "oda_run.sh RRMDA_Themi.oda"
-  command = "RRMDA_Themi.oda"
-  currentDateTime = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-  logger.info('Calling matlab with %s at %s. . . ',command,currentDateTime)
-  try:
-    ret = systemCall(commandLine, numberOfTrials, output_dir, out_buffer, out_path, recipients, command)
-    if (ret == 0):
-      logger.info('. . . done.')
-  except (KeyboardInterrupt, SystemExit):
-    sys.exit("Keyboard interrupt. Exiting.")
-
-  if (ret == 1):
-    logger.warning('Call to %s failed. Continues anyway.', command)
   
+  if observationsAvailable(homeDir,modelName):  # If True assimilate data. Simple forecast if False.
+
+    ## Setup call to openDA.
+    # Copy input files to model/input/
+    # Copy observation file to model/observation/
+    # Write RRMDA.oda
+    # Write observation.xml
+    ret = setupOpenDaRun(homeDir,modelName)
   
-  ## Clean up openDA run.
-  # Call matlab function that concatenates the model/output/workX/ files to
-  # re-create a complete input file.
-  numberOfTrials = 1
-  commandLine = matlabPathCommand+" && "+"/Applications/MATLAB_R2015a.app/bin/matlab -nodisplay -nosplash -r \"cleanUpOpenDaRun\"".format(os.path.realpath(os.path.dirname(__file__)),output_dir)
-  command = "cleanUpOpenDaRun"
-  currentDateTime = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-  logger.info('Calling matlab with %s at %s . . . ',command, currentDateTime)
-  ret = 2
-  try:
-    ret = systemCall(commandLine, numberOfTrials, output_dir, out_buffer, out_path, recipients, command)
-    if (ret == 0):
-      logger.info('. . . done.')
-  except (KeyboardInterrupt, SystemExit):
-    sys.exit("Keyboard interrupt. Exiting.")
-  if (ret==1):
-    logger.warning('Call to %s failed. Continue anyway.',command)
-  if (ret==2):
-    logger.debug('ret=2')
+    ## Call openDA.
+    # openDA needs to be propperly installed! OpenDA calls matlab with runModelOpenDA_Themi.m
+    numberOfTrials = 1
+    commandLine = "oda_run.sh RRMDA_Themi.oda"
+    command = "RRMDA_Themi.oda"
+    currentDateTime = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    logger.info('Calling matlab with %s at %s. . . ',command,currentDateTime)
+    try:
+      ret = systemCall(commandLine, numberOfTrials, output_dir, out_buffer, out_path, recipients, command)
+      if (ret == 0):
+        logger.info('. . . done.')
+    except (KeyboardInterrupt, SystemExit):
+      sys.exit("Keyboard interrupt. Exiting.")
+
+    if (ret == 1):
+      logger.warning('Call to %s failed. Continues anyway.', command)
   
+    ## Clean up openDA run.
+    # Call matlab function that concatenates the model/output/workX/ files to
+    # re-create a complete input file.
+    numberOfTrials = 1
+    commandLine = matlabPathCommand+" && "+"/Applications/MATLAB_R2015a.app/bin/matlab -nodisplay -nosplash -r \"cleanUpOpenDaRun\"".format(os.path.realpath(os.path.dirname(__file__)),output_dir)
+    command = "cleanUpOpenDaRun"
+    currentDateTime = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    logger.info('Calling matlab with %s at %s . . . ',command, currentDateTime)
+    ret = 2
+    try:
+      ret = systemCall(commandLine, numberOfTrials, output_dir, out_buffer, out_path, recipients, command)
+      if (ret == 0):
+        logger.info('. . . done.')
+    except (KeyboardInterrupt, SystemExit):
+      sys.exit("Keyboard interrupt. Exiting.")
+    if (ret==1):
+      logger.warning('Call to %s failed. Continue anyway.',command)
+    if (ret==2):
+      logger.debug('ret=2')
+  
+  else:
+  
+    ## Call runModel.m
+    numberOfTrials = 1
+    commandLine = matlabPathCommand+" && "+"/Applications/MATLAB_R2015a.app/bin/matlab -nodisplay -nosplash -r \"runModel_Themi\"".format(os.path.realpath(os.path.dirname(__file__)),output_dir)
+    command = "runModel_Themi"
+    currentDateTime = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    logger.info('Calling matlab with %s at %s . . . ',command, currentDateTime)
+    ret = 2
+    try:
+      ret = systemCall(commandLine, numberOfTrials, output_dir, out_buffer, out_path, recipients, command)
+      if (ret == 0):
+        logger.info('. . . done.')
+    except (KeyboardInterrupt, SystemExit):
+      sys.exit("Keyboard interrupt. Exiting.")
 
-  '''
-  ## Call runModel.m
-  numberOfTrials = 1
-  commandLine = matlabPathCommand+" && "+"/Applications/MATLAB_R2015a.app/bin/matlab -nodisplay -nosplash -r \"runModel_Themi\"".format(os.path.realpath(os.path.dirname(__file__)),output_dir)
-  command = "runModel_Themi"
-  currentDateTime = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-  logger.info('Calling matlab with %s at %s . . . ',command, currentDateTime)
-  ret = 2
-  try:
-    ret = systemCall(commandLine, numberOfTrials, output_dir, out_buffer, out_path, recipients, command)
-    if (ret == 0):
-      logger.info('. . . done.')
-  except (KeyboardInterrupt, SystemExit):
-    sys.exit("Keyboard interrupt. Exiting.")
+    if (ret==1):
+      #sys.exit("Call to runModel_Themi.m fialed. Exiting.")
+      logger.warning('Call to %s failed. Continue anyway.',command)
 
-  if (ret==1):
-    #sys.exit("Call to runModel_Themi.m fialed. Exiting.")
-    logger.warning('Call to %s failed. Continue anyway.',command)
-
-  if (ret==2):
-    logger.debug('ret=2')
-  '''
+    if (ret==2):
+      logger.debug('ret=2')
+  
 
 
   ## Offline mode: no sending of data to data base, no sending of matlab mails,
@@ -545,10 +577,8 @@ def main():
 
 # Main.
 if __name__=='__main__':
-  sys.exit(main())  # Exit python upon execution of main().
+  main()
   
-  
-
 
 
 
