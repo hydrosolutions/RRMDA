@@ -210,15 +210,16 @@ def setupOpenDaRun(homeDirectory,modelName):
         continue  # Skip double entries.
       else:
         index = columns[5]
+        time = columns[2]  # Time in format: '2015-10-01 07:05:25,3'
+        time = time[0:4]+time[5:7]+time[8:10]
+        value = columns[0]
         newfile = os.path.join(homeDirectory,'app',modelName,'src','observer',('imomoQ',str(index),'.txt'))
         file = open(newfile,'w')
         file.write('#----------\n')
         file.write('# Location : Q%d',index)
-        file.write('%d %d',
+        file.write('%d %d',time,value)
+        file.close()
   
-  
-    for subcat in range(0,numberOfSubCatchments):
-        
   else:
     logger.error('File not found: %s.',filename)
 
@@ -502,8 +503,10 @@ def main():
     # Copy observation file to model/observation/
     # Write RRMDA.oda
     # Write observation.xml
+
     ret = setupOpenDaRun(homeDir,modelName)
   
+  '''
     ## Call openDA.
     # openDA needs to be propperly installed! OpenDA calls matlab with runModelOpenDA_Themi.m
     numberOfTrials = 1
@@ -563,7 +566,7 @@ def main():
 
     if (ret==2):
       logger.debug('ret=2')
-  
+  '''
 
 
   ## Offline mode: no sending of data to data base, no sending of matlab mails,
