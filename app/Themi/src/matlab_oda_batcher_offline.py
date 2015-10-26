@@ -163,6 +163,65 @@ def setupOpenDaRun(homeDirectory,modelName):
     logger.error('Problem parsing and writing RRMDA.oda. Error: %s.',e)
     return 1
 
+  # Preprocess observation data. Write it to noos format for each observation
+  # location.
+  # Here an example of the noos format:
+  #
+  # #------------------------------------------------------
+  # # Timeseries retrieved from the MATROOS series database
+  # # Created at Mon Mar 17 10:37:58CET 2008
+  # #------------------------------------------------------
+  # # Location :den helder
+  # # Position : (4.745356,52.966001)
+  # # Source : observed
+  # # Unit : waterlevel_astro
+  # # Analyse time: most recent
+  # # Timezone : GMT
+  # #------------------------------------------------------
+  # 200801010000 0.7300
+  # 200801010010 0.7300
+  # 200801010020 0.7200E
+  #
+
+  # Read in the file.
+  date = jdutil.date_to_jd(int(datetime.now().strftime('%Y')),
+                         int(datetime.now().strftime('%m')),
+                         float(datetime.now().strftime('%d')))
+  date = jdutil.jd_to_mjd(date)
+  # Convert to matlab datenum
+  date = date + 678942
+  datenum = "%d" % date
+  obsDir = os.path.join(homeDirectory,'app',modelName,'data','raw','imomo')
+  filename = os.path.join(obsDir,(datenum+'DLoad.csv'))
+  dischargeData = []
+  numberOfSubCatchments = 8
+  if os.path.exists(filename):
+    # Scan line by line until the second entry (variable ID) of a line matches 25
+    # (discharge).
+    for line in open(filename):
+      if re.search('^\d+\.*\d*,25,.+',line):
+        dischargeData.append(line)
+    # Get maximum value -> reverse order.
+    xmllist = []
+    index = 9
+    for item in reversed(dischargeData):
+      columns = re.split(item,',')
+      if index == columns[5]:
+        continue  # Skip double entries.
+      else:
+        index = columns[5]
+        newfile = os.path.join(homeDirectory,'app',modelName,'src','observer',('imomoQ',str(index),'.txt'))
+        file = open(newfile,'w')
+        file.write('#----------\n')
+        file.write('# Location : Q%d',index)
+        file.write('%d %d',
+  
+  
+    for subcat in range(0,numberOfSubCatchments):
+        
+  else:
+    logger.error('File not found: %s.',filename)
+
   # Write Observations.xml
   try:
     DOMTree = xml.dom.minidom.parse("observer/Observations.xml")
@@ -177,7 +236,7 @@ def setupOpenDaRun(homeDirectory,modelName):
   except Exception, e:
     logger.error('Problem parsing and writing Observations.xml. Error: %s.',e)
     return 1
-
+  
   return 0
 
 def systemCall(args, numberOfTrials, output_dir, out_buffer, out_path, recipients, command):
