@@ -80,10 +80,19 @@ try
         %Update the data
         if max(timeP,[],2) ~= max(new.timeP,[],2) % if there is no new data, save the old data
             nNew = max(new.timeP,[],2)-max(timeP,[],2); % number of days of new data
-            timeP(end+1:end+nNew) = new.timeP(end-nNew+1:end); % add new dates
-            P(:,:,end+1:end+nNew) = new.P(:,:,end-nNew+1:end); % add new precipitation data
+            if nNew > length(new.timeP) % Insert NaNs
+              nMiss = nNew - length(new.timeP);
+              % fill in missing values
+              new.timeP = (new.timeP(1)-nMiss:new.timeP(end))';
+              P = cat(3,P,NaN(size(P,1),size(P,2),nMiss));
+              nNew = nNew - nMiss;
+              timeP(end+1:end+nNew) = new.timeP(end-nNew+1:end); % add new dates
+              P(:,:,end+1:end+nNew) = new.P(:,:,end-nNew+1:end); % add new temp data
+            else
+              timeP(end+1:end+nNew) = new.timeP(end-nNew+1:end); % add new dates
+              P(:,:,end+1:end+nNew) = new.P(:,:,end-nNew+1:end); % add new precipitation data
+            end
         end
-        
     end
     
     %Save updated data
@@ -193,15 +202,16 @@ try
                 
                 % NaN-tag and update the data
                 nMiss = nNew - ndays;
-                newMissing = new(1:nMiss);
+                
+                newMissing = new(1);
                 
                 tempTimeF = newMissing{1}.timeF;
                 
                 for idx = 1 : nMiss
-                    newMissing{idx}.FT = NaN * newMissing{idx}.FT;
-                    newMissing{idx}.FmaxT = NaN * newMissing{idx}.FmaxT;
-                    newMissing{idx}.FminT = NaN * newMissing{idx}.FminT;
-                    newMissing{idx}.FP = NaN * newMissing{idx}.FP;
+                    newMissing{idx}.FT = NaN * newMissing{1}.FT;
+                    newMissing{idx}.FmaxT = NaN * newMissing{1}.FmaxT;
+                    newMissing{idx}.FminT = NaN * newMissing{1}.FminT;
+                    newMissing{idx}.FP = NaN * newMissing{1}.FP;
                     newMissing{idx}.timeF = tempTimeF - ((nMiss - idx) + 1);
                 end
                 
@@ -300,15 +310,38 @@ try
             if WMO.YEARMODA(end,ID) ~= new.YEARMODA(end,ID) ; % if there is no new data, save the old data
                 % number of new data
                 nNew=datenum(num2str(new.YEARMODA(end,ID)),'yyyymmdd')-datenum(num2str(WMO.YEARMODA(end,ID)),'yyyymmdd');
-                %add new data
-                WMO.YEARMODA(end+1:end+nNew,:) = new.YEARMODA(end-nNew+1:end,:);
-                WMO.TEMP(end+1:end+nNew,:) = new.TEMP(end-nNew+1:end,:);
-                WMO.DEWP(end+1:end+nNew,:) = new.DEWP(end-nNew+1:end,:);
-                WMO.WDSP(end+1:end+nNew,:) = new.WDSP(end-nNew+1:end,:);
-                WMO.MAX(end+1:end+nNew,:) = new.MAX(end-nNew+1:end,:);
-                WMO.MIN(end+1:end+nNew,:) = new.MIN(end-nNew+1:end,:);
-                WMO.PRCP(end+1:end+nNew,:) = new.PRCP(end-nNew+1:end,:);
-                WMO.FRSHTT(end+1:end+nNew,:) = new.FRSHTT(end-nNew+1:end,:);
+                if nNew > size(new.YEARMODA,1)  % Patch with NaNs
+                  nMiss = nNew - size(new.YEARMODA,1);
+                  for l = 1:nMiss
+                    WMO.YEARMODA(end+l,:) = NaN .* new.YEARMODA(end,:);
+                    WMO.TEMP(end+l,:) = NaN .* new.TEMP(end,:);
+                    WMO.DEWP(end+l,:) = NaN .* new.DEWP(end,:);
+                    WMO.WDSP(end+l,:) = new.WDSP(end,:);
+                    WMO.MAX(end+l,:) = new.MAX(end,:);
+                    WMO.MIN(end+l,:) = new.MIN(end,:);
+                    WMO.PRCP(end+l,:) = new.PRCP(end,:);
+                    WMO.FRSHTT(end+l,:) = new.FRSHTT(end,:);
+                  end
+                  nNew = nNew - nMiss;
+                  WMO.YEARMODA(end+1:end+nNew,:) = new.YEARMODA(end-nNew+1:end,:);
+                  WMO.TEMP(end+1:end+nNew,:) = new.TEMP(end-nNew+1:end,:);
+                  WMO.DEWP(end+1:end+nNew,:) = new.DEWP(end-nNew+1:end,:);
+                  WMO.WDSP(end+1:end+nNew,:) = new.WDSP(end-nNew+1:end,:);
+                  WMO.MAX(end+1:end+nNew,:) = new.MAX(end-nNew+1:end,:);
+                  WMO.MIN(end+1:end+nNew,:) = new.MIN(end-nNew+1:end,:);
+                  WMO.PRCP(end+1:end+nNew,:) = new.PRCP(end-nNew+1:end,:);
+                  WMO.FRSHTT(end+1:end+nNew,:) = new.FRSHTT(end-nNew+1:end,:);
+                else
+                  %add new data
+                  WMO.YEARMODA(end+1:end+nNew,:) = new.YEARMODA(end-nNew+1:end,:);
+                  WMO.TEMP(end+1:end+nNew,:) = new.TEMP(end-nNew+1:end,:);
+                  WMO.DEWP(end+1:end+nNew,:) = new.DEWP(end-nNew+1:end,:);
+                  WMO.WDSP(end+1:end+nNew,:) = new.WDSP(end-nNew+1:end,:);
+                  WMO.MAX(end+1:end+nNew,:) = new.MAX(end-nNew+1:end,:);
+                  WMO.MIN(end+1:end+nNew,:) = new.MIN(end-nNew+1:end,:);
+                  WMO.PRCP(end+1:end+nNew,:) = new.PRCP(end-nNew+1:end,:);
+                  WMO.FRSHTT(end+1:end+nNew,:) = new.FRSHTT(end-nNew+1:end,:);
+                end
             end
         end
     end
