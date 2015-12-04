@@ -2,7 +2,7 @@
 <blackBoxStochModel xmlns="http://www.openda.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openda.org http://schemas.openda.org/blackBoxStochModelConfig.xsd">
     
     <modelConfig>
-        <file>./ModelConfig.xml</file>
+        <file>./ConfigModel.xml</file>
     </modelConfig>
     
     <vectorSpecification>

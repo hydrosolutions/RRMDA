@@ -33,5 +33,14 @@ eval(['fprintf(fid, ''customprm.runType=%s\n'', ''''''' prm.customprm.runType ''
 eval(['fprintf(fid, ''customprm.geometry=%s\n'', ''''''' prm.customprm.geometry ''''''');']);
 fclose(fid);
 %% WRITE BACK UPDATED E and SG MATRICES
-E = Eout; save(prm.path.E,'E');
+E = Eout; 
+save(prm.path.E,'E');
+
+%% For openDA run, save current time step together with augmented states.
+[epath,~,eext] = fileparts(prm.path.E);
+timepath = [epath,filesep,['time',eext]];
+dstr = sprintf('%02d%02d%4d',prm.customprm.simStartD,prm.customprm.simStartM,prm.customprm.simStartY);
+time = datenum(dstr,'ddmmyyyy');
+save(timepath,'time');
+
 end

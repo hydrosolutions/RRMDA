@@ -11,7 +11,7 @@
 	<!-- selection to add noise to a model. This should probably be false unless you are generating data for a
 	twin-experpiment -->
 	<mainModel stochParameter="false" stochForcing="false" stochInit="false"/>
-	<ensembleSize>10</ensembleSize>
+	<ensembleSize>3</ensembleSize>
   <!-- <localization>hamill</localization> needs distance, not specified in xsd . . . documentation to follow by openDA. -->
 	<!-- selection to add noise to the ensemble members.
 	This should probably be true unless your model has difficulty with the changes of parameters, initial state

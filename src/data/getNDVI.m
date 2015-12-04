@@ -63,7 +63,8 @@ end
 
 
 % location of NDVI file
-fullNDVI = strcat('http://earlywarning.usgs.gov/ftp2/',reg,'/emodis/');
+%fullNDVI = strcat('http://earlywarning.usgs.gov/ftp2/',reg,'/emodis/');
+fullNDVI = strcat('http://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/',reg,'/emodis/');
 
 % create number for actual period -> set
 set = ceil((inDate - datenum((strcat('0101',datestr(inDate,'yyyy'))),'ddmmyyyy'))/5);
@@ -80,15 +81,15 @@ while sFlag == 0
         % earlier set.
         try
             unzip(filename);
-%             disp([filename, ' already exists. Latest data up to date']);
+            disp([filename, ' already exists. Latest data up to date']);
             sFlag = 1;
             
         catch
-%             disp(['trying to download ', filename]);
+            disp(['trying to download ', filename]);
             [filestr,status] = urlwrite(strcat(fullNDVI,filename),filename);
             if status == 1
                 unzip(filename);
-%                 disp(['download of ', filename, ' successfully finished']);
+                disp(['download of ', filename, ' successfully finished']);
                 sFlag = 1;
             else
                 set = set - 1; % try to access the latest file decrementally

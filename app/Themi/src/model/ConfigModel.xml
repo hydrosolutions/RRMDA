@@ -3,7 +3,7 @@
 <blackBoxModelConfig xmlns="http://www.openda.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openda.org http://schemas.openda.org/blackBoxModelConfig.xsd">
 
     <wrapperConfig>
-        <file>./WrapperConfig.xml</file>
+        <file>./ConfigWrapper.xml</file>
     </wrapperConfig>
     
     <aliasValues>

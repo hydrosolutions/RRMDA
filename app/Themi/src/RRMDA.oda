@@ -7,7 +7,7 @@
 
   <stochModelFactory className="org.openda.blackbox.wrapper.BBStochModelFactory">
     <workingDirectory>./model</workingDirectory>
-    <configFile>StochModel.xml</configFile>
+    <configFile>ConfigStochModel.xml</configFile>
   </stochModelFactory>
 
   <algorithm className="org.openda.algorithms.kalmanFilter.EnKF">
@@ -23,7 +23,7 @@
     </selection>
   </resultWriter>
 
-  <restartInFile>RESTART_736263.zip</restartInFile>
+  <restartInFile>RESTART_0.zip</restartInFile>
 
   <restartOutFilePrefix>RESTART_</restartOutFilePrefix>
 
