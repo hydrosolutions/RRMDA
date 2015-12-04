@@ -40,7 +40,10 @@ save(prm.path.E,'E');
 [epath,~,eext] = fileparts(prm.path.E);
 timepath = [epath,filesep,['time',eext]];
 dstr = sprintf('%02d%02d%4d',prm.customprm.simStartD,prm.customprm.simStartM,prm.customprm.simStartY);
-time = datenum(dstr,'ddmmyyyy');
-save(timepath,'time');
+startTime = datenum(dstr,'ddmmyyyy') - 1;
+endTime = startTime + 1;
+step = 1;
+save(timepath,'startTime','endTime','step');
+save([epath,filesep,['E_oda',eext]],'E','startTime');
 
 end

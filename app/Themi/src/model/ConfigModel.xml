@@ -14,9 +14,10 @@
         <alias key="instanceDir" value="output/work"/>
         <alias key="binDir" value="bin"/>
         <alias key="EmatFile" value="E.mat"/>
+        <alias key="timematFile" value="time.mat"/>
     </aliasValues>
     
-    <timeInfoExchangeItems start="currentTime" end="finalTime" timeStep="simulationTimeStep"/>
+    <timeInfoExchangeItems start="startTime" end="endTime" timeStep="step"/>
     
     <exchangeItems>
         <!-- parameters -->
@@ -54,9 +55,9 @@
         <vector id="Smax8" ioObjectId="Emat"/>
         
         <!-- time configuration -->
-        <vector id="currentTime" ioObjectId="timeConfig" elementId="currentTime"/>
-        <vector id="finalTime" ioObjectId="timeConfig" elementId="finalTime"/>
-        <vector id="simulationTimeStep" ioObjectId="timeConfig" elementId="simulationTimeStep"/>
+        <vector id="startTime" ioObjectId="timemat"/>
+        <vector id="endTime" ioObjectId="timemat"/>
+        <vector id="step" ioObjectId="timemat"/>
         
         <!-- states -->
         <vector id="Q1" ioObjectId="Emat"/>
