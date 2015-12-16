@@ -61,8 +61,10 @@ Temporary Items
 app/Themi/data/
 app/Themi/resources/
 app/Themi/results/
-app/Themi/src/model/input
-app/Themi/src/model/output
+app/Themi/src/oda_model/input
+app/Themi/src/oda_model/output
+app/Themi/src/oda_restart/
+app/Themi/src/oda_results/
 app/Themi_example/
 testing/Vakhsh_data/
 testing/waterStress/

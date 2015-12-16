@@ -1,4 +1,4 @@
-function [E] = write_customprm(paths,prm,Eout)
+function [E] = write_customprmOpenDA(paths,prm,Eout)
 % Writing back updated custom parameters after successful assimilation.
 %
 % tobias siegfried, 26/11/2014
@@ -36,5 +36,22 @@ fclose(fid);
 E = Eout; 
 save(prm.path.E,'E');
 
+%% For openDA run, save current time step together with augmented states. Save 
+% a copy to openDA working directory. 
+[epath,~,eext] = fileparts(prm.path.E);
+parts = strsplit(epath,filesep);
+l = length(parts)-4;
+newpath = '';
+for i = 2:l
+  newpath = [newpath,filesep,char(parts(i))];
+end
+
+timepath = [newpath,filesep,['time',eext]];
+dstr = sprintf('%02d%02d%4d',prm.customprm.simStartD,prm.customprm.simStartM,prm.customprm.simStartY);
+startTime = datestr(datenum(dstr,'ddmmyyyy'),'yyyymmddHHMM');
+endTime = datestr(datenum(dstr,'ddmmyyyy') + 1,'yyyymmddHHMM');
+step = 1;
+save(timepath,'startTime','endTime','step');
+save([newpath,filesep,['E_oda',eext]],'E','startTime');
 
 end

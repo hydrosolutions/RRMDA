@@ -8,6 +8,7 @@
         <alias key="binDir"/>
         <alias key="EmatFile"/>
         <alias key="timematFile"/>
+        <!--<alias key="instRestartDir"/>-->
     </aliasDefinitions>
     
     <run>
@@ -19,22 +20,25 @@
         <!-- define actions relative to working dir. -->
         <computeActions>
             <action macExe="%binDir%/matlab_batcher.sh" workingDirectory="%instanceDir%" >
-            	<arg>"same_as_script"</arg>
-                <arg>"runModelOpenDA_Themi"</arg>
-                <checkReturnStatus expect="0"/>
+            	<arg>"/Users/beamarti/Dropbox (hydrosolutions)/RRMDA/app/Themi/src/oda_model/%instanceDir%%instanceNumber%"</arg>
+              <arg>"runModelOpenDA_Themi"</arg>
+              <checkReturnStatus expect="0"/>
             	<checkOutput file="%EmatFile%"/> <!--determinitsicBudykoModelReturnValue.txt" expect="1"/>-->
             </action>
             	<!-- The return message of the blackbox model is stored in the deterministicBudykoModelReturnMessage.txt -->
         </computeActions>
         
         <additionalComputeActions></additionalComputeActions>
+        
         <!-- actions to finalize (e.g. cleanup) an instance -->
-        <!-- 
         <finalizeActions>
-        	<action workingDirectory="%instanceDir%" macExe="./matlab_batcher.sh" arg="restore"/>
+        	<!--
+          <action macExe="%binDir%/matlab_batcher.sh" workingDirectory="%instanceDir%" >
+            <arg>"same_as_script"</arg>
+            <arg>"wrappingUpOpenDARun"</arg>
+          </action>
+           -->
         </finalizeActions>
-        -->
-        <finalizeActions></finalizeActions>
         
     </run>
     
@@ -49,7 +53,7 @@
         
         <!-- Read time specs -->
         <!-- -->
-         <ioObject className="org.openda.model_RRMDA_Themi.TimesWrapper">
+         <ioObject className="org.openda.model_RRMDA_Themi.timeWrapper">
         	<file>%timematFile%</file>
         	<id>timemat</id>
         	<arg>%instanceDir%%instanceNumber%</arg>

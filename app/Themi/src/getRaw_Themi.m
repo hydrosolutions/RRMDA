@@ -582,6 +582,8 @@ try
     
     toc
     
+    exit(0);
+    
     
 catch ME
     
@@ -603,7 +605,7 @@ catch ME
     disp('Next try in 3 hours!')
     disp('---')
     
-    
+    exit(1)
     
 end
 

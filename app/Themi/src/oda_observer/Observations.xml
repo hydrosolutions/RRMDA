@@ -1,0 +1,20 @@
+<?xml version="1.0" ?><noosObserver xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <timeSeries id="Q1" standardDeviation="0.05" status="use">imomoQ1.txt</timeSeries>
+  
+  <timeSeries id="Q2" standardDeviation="0.05" status="use">imomoQ2.txt</timeSeries>
+
+  <timeSeries id="Q3" standardDeviation="0.05" status="use">imomoQ3.txt</timeSeries>
+
+  <timeSeries id="Q4" standardDeviation="0.05" status="use">imomoQ4.txt</timeSeries>
+
+  <timeSeries id="Q5" standardDeviation="0.05" status="use">imomoQ5.txt</timeSeries>
+
+  <timeSeries id="Q6" standardDeviation="0.05" status="use">imomoQ6.txt</timeSeries>
+
+  <timeSeries id="Q7" standardDeviation="0.05" status="use">imomoQ7.txt</timeSeries>
+
+  <timeSeries id="Q8" standardDeviation="0.05" status="use">imomoQ8.txt</timeSeries>
+
+
+</noosObserver>

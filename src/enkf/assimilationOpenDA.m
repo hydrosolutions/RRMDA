@@ -135,12 +135,10 @@ prm.customprm.G = NaN(size(prm.customprm.P));
 % ONE STEP ASSIMILATION (USING DATA FROM 'YESTERDAY')
 cd(paths.home)
 [prm, x, x_true, Eout, stats, EStore] = mainOpenDA(prm,[],Ein);
-if ~equal(Eout,Ein)
-  fprintf('WARNING in mainOpenDA: Eout ~= Ein.\n');
-end
+
 
 % PROCESS / STORE UPDATED STATES ETC.
-[E] = write_customprm(paths,prm,Eout);
+[E] = write_customprmOpenDA(paths,prm,Eout);
 
 
 

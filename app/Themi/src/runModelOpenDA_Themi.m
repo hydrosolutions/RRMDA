@@ -167,6 +167,7 @@ try
     disp('---')
     %clearvars today
     toc
+    exit(0)
     
 catch ME
     
@@ -175,11 +176,12 @@ catch ME
     nowT = datevec(now);
     nowT = nowT(1:4)
     disp('---')
-    disp('Error occured in runModel_Themi.m! ERROR SPECIFICS:')
+    fprintf('Error occured in runModel_Themi.m! ERROR SPECIFICS: %s',ME.message)
     rethrow(ME)
     disp('---')
     disp('Next try in 3 hours!')
     disp('---')
+    exit(1)
     
 end
     

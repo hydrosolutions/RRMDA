@@ -1,30 +1,30 @@
 <?xml version="1.0" ?><openDaApplication xmlns:oda="http://www.openda.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openda.org http://schemas.openda.org/openDaApplication.xsd">
 
   <stochObserver className="org.openda.observers.NoosTimeSeriesStochObserver">
-    <workingDirectory>./observer</workingDirectory>
+    <workingDirectory>./oda_observer</workingDirectory>
     <configFile>Observations.xml</configFile>
   </stochObserver>
 
   <stochModelFactory className="org.openda.blackbox.wrapper.BBStochModelFactory">
-    <workingDirectory>./model</workingDirectory>
+    <workingDirectory>./oda_model</workingDirectory>
     <configFile>ConfigStochModel.xml</configFile>
   </stochModelFactory>
 
   <algorithm className="org.openda.algorithms.kalmanFilter.EnKF">
-    <workingDirectory>./algorithms</workingDirectory>
+    <workingDirectory>./oda_algorithms</workingDirectory>
     <configString>EnKF.xml</configString>
   </algorithm>
 
   <resultWriter className="org.openda.resultwriters.MatlabResultWriter">
-    <workingDirectory>.</workingDirectory>
-    <configFile>RRMDA_EnKF.m</configFile>
+    <workingDirectory>./oda_results</workingDirectory>
+    <configFile>RRMDA_EnKF_20151216.m</configFile>
     <selection>
       <resultItem outputLevel="All"/>
     </selection>
   </resultWriter>
 
-  <restartInFile>RESTART_0.zip</restartInFile>
+  <restartInFile>./oda_restart/RESTART_20151216.zip</restartInFile>
 
-  <restartOutFilePrefix>RESTART_</restartOutFilePrefix>
+  <restartOutFilePrefix>./oda_restart/RESTART_</restartOutFilePrefix>
 
 </openDaApplication>

@@ -1,0 +1,8 @@
+<?xml version="1.0" ?><timeSeriesNoiseModelConfig>
+    
+    <simulationTimespan timeFormat="dateTimeString">201512150000,201512160000,...,201512190000</simulationTimespan>
+    
+    <timeSeries height="0.0" id="noiseModelSoilMoisture" initialValue="0.0" location="outflow" quantity="soilMoisture_noise" source="generated_noise" standardDeviation="0.05" timeCorrelationScale="0.0" timeCorrelationScaleUnit="days" timezone="GMT" unit="mm"/>
+    
+    <!-- The time series noise model simulates an exponential time correlation. In order to reduce the time dependency of the noise model, a high timeCorrelationScale can be used. -->
+</timeSeriesNoiseModelConfig>

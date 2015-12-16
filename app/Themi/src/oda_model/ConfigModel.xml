@@ -12,8 +12,9 @@
         <!-- The alias "instanceNumber" is special, its value is set by the Factory -->
         <alias key="templateDir" value="input"/>
         <alias key="instanceDir" value="output/work"/>
+        <!--<alias key="instRestartDir" value="/app/Themi/resources/restart"/>-->
         <alias key="binDir" value="bin"/>
-        <alias key="EmatFile" value="E.mat"/>
+        <alias key="EmatFile" value="E_oda.mat"/>
         <alias key="timematFile" value="time.mat"/>
     </aliasValues>
     
@@ -99,7 +100,7 @@
     
     <!-- specify where to store the restart files of the stoch model instances and which files to store. -->
     <restartInfo dirPrefix="ModelRestart_">
-        <modelStateFile>E.mat</modelStateFile>
+        <modelStateFile>E_oda.mat</modelStateFile>
     </restartInfo>
     
 </blackBoxModelConfig>

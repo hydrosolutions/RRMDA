@@ -88,6 +88,7 @@
             <vector id="Smax8"/>
             
             <!-- noise on current states -->
+            <!--
             <noiseModel id="noiseModelDischarge" className="org.openda.noiseModels.TimeSeriesNoiseModelFactory" workingDirectory=".">
                 <configFile>NoiseModel_discharge.xml</configFile>
                 <exchangeItems>
@@ -207,8 +208,10 @@
                 </exchangeItem>
               </exchangeItems>
             </noiseModel>
+            -->
             
             <!-- noise on parameters -->
+            <!--
             <noiseModel id="noiseModelAlpha1" className="org.openda.noiseModels.TimeSeriesNoiseModelFactory" workingDirectory=".">
               <configFile>NoiseModel_alpha1.xml</configFile>
               <exchangeItems>
@@ -328,7 +331,7 @@
                 </exchangeItem>
               </exchangeItems>
             </noiseModel>
-            
+            -->
         </state>
         
         <predictor>
