@@ -541,6 +541,8 @@ def systemCall(args, numberOfTrials, output_dir, out_buffer, out_path, recipient
     except subprocess.CalledProcessError:  # check_call returned non-zero returncode.
       logger.warning('Command %s failed for the %d(st,nd,rd,th) time.', command, i+1)
       returnValue = 2
+      if command == "RRMDA_Themi.oda":  # For some reason oda_run does not return 0 for success.
+        return 0
       with open(os.path.join(output_dir, 'error.txt'), 'w') as ferr:
         ferr.write("Error calling system with %s%s"%(args,os.linesep))
 
@@ -811,7 +813,7 @@ def main():
   except (KeyboardInterrupt, SystemExit):
     sys.exit("Keyboard interrupt. Exiting.")
 
-  if (ret == 1):
+  if (ret != 0):
     logger.warning('Call to %s failed. Continues anyway.', command)
 
   
@@ -919,7 +921,7 @@ def main():
   ## Wrapping up.
   if (ret == 0):
     currentDateTime = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    message = 'Successfully ran off-line model on imac.'
+    message = 'Successfully ran off-line model RRMDA_Themi on imac.'
     sendEmail(recipients,subject,message)
     logger.info('Done at %s. ',currentDateTime)
   

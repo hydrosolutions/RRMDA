@@ -9,6 +9,8 @@ ehthumbs.db
 *.diff
 *.bkp
 RESTART*
+openda_logfile.txt
+error.txt
 
 # Ignore compiled code
 *.pyc
